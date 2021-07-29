@@ -78,39 +78,40 @@ shop:
 	for ig in get_items().items():
 		group_name, items = ig
 		group_title = group_name.replace('_', ' ').title()
+		group_id = group_title.replace(' ', '')
 		if not items: continue
 
-		shop_data = """ShopName: {0}
-DisplayName: '&8{1} &b(%page%/%maxpage%)'
-Command: shop-{2}
+		shop_data = f"""ShopName: {group_id}
+DisplayName: '&8{group_title} &b(%page%/%maxpage%)'
+Command: shop-{group_name.lower()}
 signs:
-  text: '[Shop{0}]'
+  text: '[Shop{group_id}]'
   NeedPermissionToCreateSign: true
 itemshop:
-""".format(group_title.replace(' ', ''), group_title, group_name.lower())
+"""
 
 		for i in items:
 			ikey = i.replace('_', '')
 			if ikey in worth:
-				shop_data += """  {0}:
-    Worth: {1}
+				shop_data += f"""  {ikey}:
+    Worth: {worth[ikey]}
     Item:
-    - type:{2}
+    - type:{i}
     - amount:64
-""".format(ikey, worth[ikey], i)
+"""
 
 		with open(os.path.join(outpath, 'Shop{0}.yml'.format(group_title.replace(' ', ''))), 'w') as shopfile:
 			shopfile.write(shop_data)
 
-		main_shop_data += """  {0}:
+		main_shop_data += f"""  {group_id}:
     MenuItem:
-    - name:&c{1}
+    - name:&c{group_title}
     - amount:1
-    - type:{2}
+    - type:{shop_blocks[group_name]}
     RewardType: SHOP
-    Reward: {0}
+    Reward: {group_id}
     PriceType: NOTHING
-""".format(group_title.replace(' ', ''), group_title, shop_blocks[group_name])
+"""
 
 	with open(os.path.join(outpath, 'Menu.yml'), 'w') as shopfile:
 		shopfile.write(main_shop_data)
