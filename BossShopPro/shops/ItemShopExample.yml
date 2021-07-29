@@ -1,0 +1,1158 @@
+ShopName: ItemShop
+DisplayName: '&8ItemShop (%page%/%maxpage%)'
+Command: itemshop
+signs:
+  text: '[ItemShop]'
+  NeedPermissionToCreateSign: true
+itemshop:
+  stone:
+    Worth: 3.0
+    Item:
+    - type:STONE
+    - amount:64
+  granite:
+    Worth: 3.0
+    AllowBuyAll: false
+    Item:
+    - type:granite
+    - amount:64
+  polishedgranite:
+    Worth: 3.0
+    AllowSellAll: false
+    PriceBuy: 7.0
+    Item:
+    - type:polishedgranite
+    - amount:64
+  diorite:
+    Worth: 3.0
+    Item:
+    - type:diorite
+    - amount:64
+  polisheddiorite:
+    Worth: 3.0
+    Item:
+    - type:polished_diorite
+    - amount:64
+  andesite:
+    Worth: 3.0
+    Item:
+    - type:andesite
+    - amount:64
+  polishedandesite:
+    Worth: 3.0
+    Item:
+    - type:polished_andesite
+    - amount:64
+  grass:
+    Worth: 1.0
+    Item:
+    - type:GRASS
+    - amount:64
+  dirt:
+    Worth: 1.0
+    Item:
+    - type:DIRT
+    - amount:64
+  cdirt:
+    Worth: 1.0
+    Item:
+    - type:coarse_dirt
+    - amount:64
+  podzol:
+    Worth: 1.0
+    Item:
+    - type:podzol
+    - amount:64
+  cobblestone:
+    Worth: 1.0
+    RewardSell: 0.2
+    Item:
+    - type:COBBLESTONE
+    - amount:64
+  wood:
+    Worth: 0.5
+    Item:
+    - type:WOOD
+    - amount:64
+  spruceplank:
+    Worth: 0.5
+    Item:
+    - type:spruce_planks
+    - amount:64
+  birchplank:
+    Worth: 0.5
+    Item:
+    - type:birch_planks
+    - amount:64
+  jungleplank:
+    Worth: 0.5
+    Item:
+    - type:jungle_planks
+    - amount:64
+  acaciaplank:
+    Worth: 0.5
+    Item:
+    - type:acacia_planks
+    - amount:64
+  darkoakplank:
+    Worth: 0.5
+    Item:
+    - type:dark_oak_planks
+    - amount:64
+  sapling:
+    Worth: 2.0
+    Item:
+    - type:SAPLING
+    - amount:64
+  darksapling:
+    Worth: 2.0
+    Item:
+    - type:dark_oak_sapling
+    - amount:64
+  birchsapling:
+    Worth: 2.0
+    Item:
+    - type:birch_sapling
+    - amount:64
+  junglesapling:
+    Worth: 2.0
+    Item:
+    - type:jungle_sapling
+    - amount:64
+  acaciasapling:
+    Worth: 2.0
+    Item:
+    - type:acacia_sapling
+    - amount:64
+  darkoaksapling:
+    Worth: 2.0
+    Item:
+    - type:dark_oak_sapling
+    - amount:64
+  sand:
+    Worth: 1.0
+    Item:
+    - type:SAND
+    - amount:64
+  redsand:
+    Worth: 1.0
+    Item:
+    - type:red_sand
+    - amount:64
+  gravel:
+    Worth: 1.0
+    Item:
+    - type:GRAVEL
+    - amount:64
+  tree:
+    Worth: 2.0
+    Item:
+    - type:LOG
+    - amount:64
+  spruce:
+    Worth: 2.0
+    Item:
+    - type:spruce_log
+    - amount:64
+  birch:
+    Worth: 2.0
+    Item:
+    - type:birch_log
+    - amount:64
+  jungletree:
+    Worth: 2.0
+    Item:
+    - type:jungle_log
+    - amount:64
+  leaves:
+    Worth: 1.0
+    Item:
+    - type:LEAVES
+    - amount:64
+  spruceleaves:
+    Worth: 1.0
+    Item:
+    - type:spruce_leaves
+    - amount:64
+  birchleaves:
+    Worth: 1.0
+    Item:
+    - type:birch_leaves
+    - amount:64
+  jungleleaves:
+    Worth: 1.0
+    Item:
+    - type:jungle_leaves
+    - amount:64
+  sponge:
+    Worth: 80.0
+    Item:
+    - type:SPONGE
+    - amount:64
+  wetsponge:
+    Worth: 80.0
+    Item:
+    - type:wet_sponge
+    - amount:64
+  glass:
+    Worth: 3.0
+    Item:
+    - type:GLASS
+    - amount:64
+  lapislazuliblock:
+    AllowSell: false
+    Worth: 150.0
+    Item:
+    - type:LAPIS_BLOCK
+    - amount:64
+  goldblock:
+    AllowSell: false
+    AllowBuyAll: false
+    Worth: 450.0
+    Item:
+    - type:GOLD_BLOCK
+    - amount:8
+  ironblock:
+    Worth: 190.0
+    Item:
+    - type:IRON_BLOCK
+    - amount:8
+  diamondblock:
+    AllowSell: false
+    AllowBuyAll: false
+    Worth: 2000.0
+    Item:
+    - type:DIAMOND_BLOCK
+    - amount:4
+  sandstone:
+    Worth: 3.0
+    Item:
+    - type:SANDSTONE
+    - amount:64
+  chiseled_sandstone:
+    Worth: 3.0
+    Item:
+    - type:chiseled_sandstone
+    - amount:64
+  cut_sandstone:
+    Worth: 3.0
+    Item:
+    - type:cut_sandstone
+    - amount:64
+  whitewool:
+    Worth: 20.0
+    Item:
+    - type:white_wool
+    - amount:64
+  orangewool:
+    Worth: 20.0
+    Item:
+    - type:orange_wool
+    - amount:64
+  magentawool:
+    Worth: 20.0
+    Item:
+    - type:magenta_wool
+    - amount:64
+  lightbluewool:
+    Worth: 20.0
+    Item:
+    - type:light_blue_wool
+    - amount:64
+  yellowwool:
+    Worth: 20.0
+    Item:
+    - type:yellow_wool
+    - amount:64
+  limewool:
+    Worth: 20.0
+    Item:
+    - type:lime_wool
+    - amount:64
+  pinkwool:
+    Worth: 20.0
+    Item:
+    - type:pink_wool
+    - amount:64
+  graywool:
+    Worth: 20.0
+    Item:
+    - type:gray_wool
+    - amount:64
+  lightgraywool:
+    Worth: 20.0
+    Item:
+    - type:light_gray_wool
+    - amount:64
+  cyanwool:
+    Worth: 20.0
+    Item:
+    - type:cyan_wool
+    - amount:64
+  purplewool:
+    Worth: 20.0
+    Item:
+    - type:purple_wool
+    - amount:64
+  bluewool:
+    Worth: 20.0
+    Item:
+    - type:blue_wool
+    - amount:64
+  brownwool:
+    Worth: 20.0
+    Item:
+    - type:brown_wool
+    - amount:64
+  greenwool:
+    Worth: 20.0
+    Item:
+    - type:green_wool
+    - amount:64
+  redwool:
+    Worth: 20.0
+    Item:
+    - type:red_wool
+    - amount:64
+  blackwool:
+    Worth: 20.0
+    Item:
+    - type:black_wool
+    - amount:64
+  dandelion:
+    Worth: 2.0
+    Item:
+    - type:dandelion
+    - amount:4
+  poppy:
+    Worth: 2.0
+    Item:
+    - type:poppy
+    - amount:4
+  blueorchid:
+    Worth: 2.0
+    Item:
+    - type:blue_orchid
+    - amount:4
+  allium:
+    Worth: 2.0
+    Item:
+    - type:allium
+    - amount:4
+  azurebluet:
+    Worth: 2.0
+    Item:
+    - type:azure_bluet
+    - amount:4
+  redtulip:
+    Worth: 2.0
+    Item:
+    - type:red_tulip
+    - amount:4
+  orangetulip:
+    Worth: 2.0
+    Item:
+    - type:orange_tulip
+    - amount:4
+  whitetulip:
+    Worth: 2.0
+    Item:
+    - type:white_tulip
+    - amount:4
+  pinktulip:
+    Worth: 2.0
+    Item:
+    - type:pink_tulip
+    - amount:4
+  oxeye:
+    Worth: 2.0
+    Item:
+    - type:oxeye_daisy
+    - amount:4
+  brownmushroom:
+    Worth: 2.0
+    Item:
+    - type:brown_mushroom_block
+    - amount:4
+  redmushroom:
+    Worth: 2.0
+    Item:
+    - type:red_mushroom_block
+    - amount:4
+  smoothstonestep:
+    Worth: 1.5
+    Item:
+    - type:stone_slab
+    - amount:64
+  sandstonestep:
+    Worth: 1.5
+    Item:
+    - type:sandstone_slab
+    - amount:64
+  cobblestonestep:
+    Worth: 1.5
+    Item:
+    - type:cobblestone_slab
+    - amount:64
+  brickstep:
+    Worth: 1.5
+    Item:
+    - type:brick_slab
+    - amount:64
+  stonebrickstep:
+    Worth: 1.5
+    Item:
+    - type:stone_brick_slab
+    - amount:64
+  netherbrickslab:
+    Worth: 1.5
+    Item:
+    - type:nether_brick_slab
+    - amount:64
+  netherquartzstep:
+    Worth: 1.5
+    Item:
+    - type:quartz_slab
+    - amount:64
+  brickblock:
+    Worth: 21.0
+    Item:
+    - type:bricks
+    - amount:64
+  tnt:
+    Worth: 100.0
+    Item:
+    - type:TNT
+    - amount:2
+  bshelf:
+    Worth: 140.0
+    Item:
+    - type:BOOKSHELF
+    - amount:64
+  mossycobblestone:
+    Worth: 90.0
+    Item:
+    - type:MOSSY_COBBLESTONE
+    - amount:64
+  obsidian:
+    Worth: 130.0
+    Item:
+    - type:OBSIDIAN
+    - amount:16
+  torch:
+    Worth: 4.0
+    Item:
+    - type:TORCH
+    - amount:64
+  woodenstairs:
+    Worth: 1.0
+    Item:
+    - type:WOOD_STAIRS
+    - amount:64
+  chest:
+    Worth: 4.0
+    Item:
+    - type:CHEST
+    - amount:16
+  dispenser:
+    Worth: 58.0
+    Item:
+    - type:DISPENSER
+    - amount:16
+  noteblock:
+    Worth: 36.0
+    Item:
+    - type:NOTE_BLOCK
+    - amount:8
+  workbench:
+    Worth: 2.5
+    Item:
+    - type:WORKBENCH
+    - amount:1
+  furnace:
+    Worth: 8.5
+    Item:
+    - type:FURNACE
+    - amount:1
+  ladder:
+    Worth: 0.5
+    Item:
+    - type:LADDER
+    - amount:64
+  cobblestonestairs:
+    Worth: 1.5
+    Item:
+    - type:COBBLESTONE_STAIRS
+    - amount:64
+  lever:
+    Worth: 1.0
+    Item:
+    - type:LEVER
+    - amount:16
+  stonepressureplate:
+    Worth: 6.0
+    Item:
+    - type:STONE_PLATE
+    - amount:16
+  woodenpressureplate:
+    Worth: 1.0
+    Item:
+    - type:WOOD_PLATE
+    - amount:16
+  redstonedust:
+    Worth: 32.0
+    Item:
+    - type:REDSTONE
+    - amount:64
+  redstonetorch:
+    Worth: 32.0
+    Item:
+    - type:REDSTONE_TORCH_ON
+    - amount:64
+  redstonerepeater:
+    Worth: 110.0
+    Item:
+    - type:DIODE
+    - amount:32
+  stonebutton:
+    Worth: 6.0
+    Item:
+    - type:STONE_BUTTON
+    - amount:16
+  cactus:
+    Worth: 10.0
+    Item:
+    - type:CACTUS
+    - amount:32
+  clayblock:
+    Worth: 12.0
+    Item:
+    - type:CLAY
+    - amount:64
+  woodenfence:
+    Worth: 1.0
+    Item:
+    - type:FENCE
+    - amount:64
+  pumpkin:
+    Worth: 50.0
+    Item:
+    - type:PUMPKIN
+    - amount:32
+  jackolantern:
+    Worth: 56.0
+    Item:
+    - type:JACK_O_LANTERN
+    - amount:2
+  ironshovel:
+    Worth: 22.0
+    Item:
+    - type:IRON_SPADE
+    - amount:1
+  ironpickaxe:
+    Worth: 22.0
+    Item:
+    - type:IRON_PICKAXE
+    - amount:1
+  ironaxe:
+    Worth: 22.0
+    Item:
+    - type:IRON_AXE
+    - amount:1
+  apple:
+    Worth: 10.0
+    Item:
+    - type:APPLE
+    - amount:64
+  bow:
+    Worth: 15.0
+    Item:
+    - type:BOW
+    - amount:1
+  arrow:
+    Worth: 3.5
+    Item:
+    - type:ARROW
+    - amount:64
+  coal:
+    Worth: 15.0
+    Item:
+    - type:COAL
+    - amount:64
+  charcoal:
+    Worth: 15.0
+    Item:
+    - type:COAL
+    - durability:1
+    - amount:64
+  diamond:
+    Worth: 200.0
+    Item:
+    - type:DIAMOND
+    - amount:8
+  ironingot:
+    Worth: 22.0
+    Item:
+    - type:IRON_INGOT
+    - amount:32
+  goldingot:
+    Worth: 105.0
+    Item:
+    - type:GOLD_INGOT
+    - amount:16
+  ironsword:
+    Worth: 22.0
+    Item:
+    - type:IRON_SWORD
+    - amount:1
+  woodensword:
+    Worth: 1.0
+    Item:
+    - type:WOOD_SWORD
+    - amount:1
+  woodenshovel:
+    Worth: 1.0
+    Item:
+    - type:WOOD_SPADE
+    - amount:1
+  woodenpickaxe:
+    Worth: 2.0
+    Item:
+    - type:WOOD_PICKAXE
+    - amount:1
+  woodenaxe:
+    Worth: 2.0
+    Item:
+    - type:WOOD_AXE
+    - amount:1
+  stonesword:
+    Worth: 2.5
+    Item:
+    - type:STONE_SWORD
+    - amount:1
+  stoneshovel:
+    Worth: 1.5
+    Item:
+    - type:STONE_SPADE
+    - amount:1
+  stonepickaxe:
+    Worth: 4.0
+    Item:
+    - type:STONE_PICKAXE
+    - amount:1
+  stoneaxe:
+    Worth: 3.0
+    Item:
+    - type:STONE_AXE
+    - amount:1
+  diamondsword:
+    AllowSell: false
+    Worth: 420.0
+    Item:
+    - type:DIAMOND_SWORD
+    - amount:1
+  diamondshovel:
+    Worth: 210.0
+    Item:
+    - type:DIAMOND_SPADE
+    - amount:1
+  diamondpickaxe:
+    AllowSell: false
+    Worth: 650.0
+    Item:
+    - type:DIAMOND_PICKAXE
+    - amount:1
+  diamondaxe:
+    AllowSell: false
+    Worth: 650.0
+    Item:
+    - type:DIAMOND_AXE
+    - amount:1
+  stick:
+    Worth: 0.25
+    Item:
+    - type:STICK
+    - amount:64
+  bowl:
+    Worth: 0.5
+    Item:
+    - type:BOWL
+    - amount:16
+  mushroomsoup:
+    Worth: 4.5
+    Item:
+    - type:MUSHROOM_SOUP
+    - amount:1
+  goldsword:
+    Worth: 6.0
+    Item:
+    - type:GOLD_SWORD
+    - amount:1
+  goldshovel:
+    Worth: 6.0
+    Item:
+    - type:GOLD_SPADE
+    - amount:1
+  goldpickaxe:
+    Worth: 6.0
+    Item:
+    - type:GOLD_PICKAXE
+    - amount:1
+  goldaxe:
+    Worth: 6.0
+    Item:
+    - type:GOLD_AXE
+    - amount:1
+  string:
+    Worth: 5.0
+    Item:
+    - type:STRING
+    - amount:64
+  feather:
+    Worth: 3.0
+    Item:
+    - type:FEATHER
+    - amount:64
+  gunpowder:
+    Worth: 20.0
+    Item:
+    - type:SULPHUR
+    - amount:64
+  woodenhoe:
+    Worth: 2.0
+    Item:
+    - type:WOOD_HOE
+    - amount:1
+  stonehoe:
+    Worth: 2.5
+    Item:
+    - type:STONE_HOE
+    - amount:1
+  ironhoe:
+    Worth: 22.0
+    Item:
+    - type:IRON_HOE
+    - amount:1
+  diamondhoe:
+    AllowSell: false
+    Worth: 400.0
+    Item:
+    - type:DIAMOND_HOE
+    - amount:1
+  goldhoe:
+    Worth: 6.0
+    Item:
+    - type:GOLD_HOE
+    - amount:1
+  seeds:
+    Worth: 2.0
+    Item:
+    - type:SEEDS
+    - amount:64
+  wheat:
+    Worth: 9.0
+    Item:
+    - type:WHEAT
+    - amount:64
+  bread:
+    Worth: 30.0
+    Item:
+    - type:BREAD
+    - amount:32
+  leatherhelmet:
+    Worth: 52.0
+    Item:
+    - type:LEATHER_HELMET
+    - amount:1
+  leatherchestplate:
+    Worth: 85.0
+    Item:
+    - type:LEATHER_CHESTPLATE
+    - amount:1
+  leatherleggings:
+    Worth: 75.0
+    Item:
+    - type:LEATHER_LEGGINGS
+    - amount:1
+  leatherboots:
+    Worth: 42.0
+    Item:
+    - type:LEATHER_BOOTS
+    - amount:1
+  chainmailhelmet:
+    Worth: 40.0
+    Item:
+    - type:CHAINMAIL_HELMET
+    - amount:1
+  chainmailchestplate:
+    Worth: 40.0
+    Item:
+    - type:CHAINMAIL_CHESTPLATE
+    - amount:1
+  chainmailleggings:
+    Worth: 50.0
+    Item:
+    - type:CHAINMAIL_LEGGINGS
+    - amount:1
+  chainmailboots:
+    Worth: 30.0
+    Item:
+    - type:CHAINMAIL_BOOTS
+    - amount:1
+  ironhelmet:
+    Worth: 22.0
+    Item:
+    - type:IRON_HELMET
+    - amount:1
+  ironchestplate:
+    Worth: 22.0
+    Item:
+    - type:IRON_CHESTPLATE
+    - amount:1
+  ironleggings:
+    Worth: 22.0
+    Item:
+    - type:IRON_LEGGINGS
+    - amount:1
+  ironboots:
+    Worth: 22.0
+    Item:
+    - type:IRON_BOOTS
+    - amount:1
+  diamondhelmet:
+    AllowSell: false
+    Worth: 1000.0
+    Item:
+    - type:DIAMOND_HELMET
+    - amount:1
+  diamondchestplate:
+    AllowSell: false
+    Worth: 1750.0
+    Item:
+    - type:DIAMOND_CHESTPLATE
+    - amount:1
+  diamondleggings:
+    AllowSell: false
+    Worth: 1500.0
+    Item:
+    - type:DIAMOND_LEGGINGS
+    - amount:1
+  diamondboots:
+    AllowSell: false
+    Worth: 850.0
+    Item:
+    - type:DIAMOND_BOOTS
+    - amount:1
+  goldhelmet:
+    Worth: 6.0
+    Item:
+    - type:GOLD_HELMET
+    - amount:1
+  goldchestplate:
+    Worth: 6.5
+    Item:
+    - type:GOLD_CHESTPLATE
+    - amount:1
+  goldleggings:
+    Worth: 6.0
+    Item:
+    - type:GOLD_LEGGINGS
+    - amount:1
+  goldboots:
+    Worth: 6.0
+    Item:
+    - type:GOLD_BOOTS
+    - amount:1
+  cookedpork:
+    Worth: 7.0
+    Item:
+    - type:GRILLED_PORK
+    - amount:32
+  painting:
+    Worth: 25.0
+    Item:
+    - type:PAINTING
+    - amount:4
+  goldenapple:
+    Worth: 100.0
+    Item:
+    - type:GOLDEN_APPLE
+    - amount:32
+  enchantedgoldenapple:
+    Worth: 1000.0
+    Item:
+    - type:GOLDEN_APPLE
+    - durability:1
+    - amount:4
+  sign:
+    Worth: 1.5
+    Item:
+    - type:SIGN
+    - amount:16
+  woodendoor:
+    Worth: 3.0
+    Item:
+    - type:WOOD_DOOR
+    - amount:8
+  irondoor:
+    Worth: 22.0
+    Item:
+    - type:IRON_DOOR
+    - amount:8
+  bucket:
+    Worth: 22.0
+    Item:
+    - type:BUCKET
+    - amount:4
+  waterbucket:
+    Worth: 40.0
+    Item:
+    - type:WATER_BUCKET
+    - amount:1
+  magmabucket:
+    Worth: 40.0
+    Item:
+    - type:LAVA_BUCKET
+    - amount:1
+  saddle:
+    Worth: 100.0
+    Item:
+    - type:SADDLE
+    - amount:1
+  snow:
+    Worth: 1.0
+    Item:
+    - type:SNOW_BALL
+    - amount:16
+  boat:
+    Worth: 3.0
+    Item:
+    - type:BOAT
+    - amount:1
+  leather:
+    Worth: 10.0
+    Item:
+    - type:LEATHER
+    - amount:16
+  milkbucket:
+    Worth: 40.0
+    Item:
+    - type:MILK_BUCKET
+    - amount:1
+  claybrick:
+    Worth: 5.0
+    Item:
+    - type:CLAY_BRICK
+    - amount:64
+  clayball:
+    Worth: 3.0
+    Item:
+    - type:CLAY_BALL
+    - amount:64
+  reeds:
+    Worth: 10.0
+    Item:
+    - type:SUGAR_CANE
+    - amount:64
+  paper:
+    Worth: 10.0
+    Item:
+    - type:PAPER
+    - amount:64
+  book:
+    Worth: 45.0
+    Item:
+    - type:BOOK
+    - amount:64
+  slimeball:
+    Worth: 50.0
+    Item:
+    - type:SLIME_BALL
+    - amount:64
+  minecarttrack:
+    Worth: 22.0
+    Item:
+    - type:RAILS
+    - amount:32
+  minecart:
+    Worth: 23.0
+    Item:
+    - type:MINECART
+    - amount:1
+  chestminecart:
+    Worth: 30.0
+    Item:
+    - type:STORAGE_MINECART
+    - amount:1
+  furnaceminecart:
+    Worth: 32.0
+    Item:
+    - type:POWERED_MINECART
+    - amount:1
+  egg:
+    Worth: 1.0
+    Item:
+    - type:EGG
+    - amount:16
+  compass:
+    Worth: 22.0
+    Item:
+    - type:COMPASS
+    - amount:1
+  fishingrod:
+    Worth: 10.0
+    Item:
+    - type:FISHING_ROD
+    - amount:1
+  watch:
+    Worth: 6.0
+    Item:
+    - type:WATCH
+    - amount:1
+  glowstonedust:
+    Worth: 10.0
+    Item:
+    - type:GLOWSTONE_DUST
+    - amount:64
+  rawfish:
+    Worth: 5.0
+    Item:
+    - type:cod
+    - amount:32
+  rawsalmonfish:
+    Worth: 5.0
+    Item:
+    - type:salmon
+    - amount:32
+  rawclownfish:
+    Worth: 5.0
+    Item:
+    - type:tropical_fish
+    - amount:32
+  rawpufferfish:
+    Worth: 5.0
+    Item:
+    - type:pufferfish
+    - amount:32
+  cookedfish:
+    Worth: 7.0
+    Item:
+    - type:cooked_cod
+    - amount:32
+  cookedsalmonfish:
+    Worth: 7.0
+    Item:
+    - type:cooked_salmon
+    - amount:32
+  dye:
+    Worth: 10.0
+    Item:
+    - type:ink_sac
+    - amount:8
+  rosered:
+    Worth: 10.0
+    Item:
+    - type:rose_red
+    - amount:64
+  cactusgreen:
+    Worth: 10.0
+    Item:
+    - type:cactus_green
+    - amount:8
+  cocoabeans:
+    Worth: 10.0
+    Item:
+    - type:cocoa_beans
+    - amount:8
+  lapislazuli:
+    Worth: 15.0
+    Item:
+    - type:lapis_lazuli
+    - amount:8
+  purpledye:
+    Worth: 10.0
+    Item:
+    - type:purple_dye
+    - amount:8
+  cyandye:
+    Worth: 10.0
+    Item:
+    - type:cyan_dye
+    - amount:8
+  lightgraydye:
+    Worth: 10.0
+    Item:
+    - type:light_gray_dye
+    - amount:8
+  graydye:
+    Worth: 10.0
+    Item:
+    - type:gray_dye
+    - amount:8
+  pinkdye:
+    Worth: 10.0
+    Item:
+    - type:pink_dye
+    - amount:8
+  limedye:
+    Worth: 10.0
+    Item:
+    - type:lime_dye
+    - amount:8
+  dandelionyellow:
+    Worth: 10.0
+    Item:
+    - type:dandelion_yellow
+    - amount:8
+  lightbluecolour:
+    Worth: 10.0
+    Item:
+    - type:light_blue_dye
+    - amount:8
+  magentacolour:
+    Worth: 10.0
+    Item:
+    - type:magenta_dye
+    - amount:8
+  orangecolour:
+    Worth: 10.0
+    Item:
+    - type:orange_dye
+    - amount:8
+  bonemeal:
+    Worth: 10.0
+    Item:
+    - type:bone_meal
+    - amount:8
+  bone:
+    Worth: 2.0
+    Item:
+    - type:BONE
+    - amount:16
+  sugar:
+    Worth: 10.0
+    Item:
+    - type:SUGAR
+    - amount:64
+  cake:
+    Worth: 180.0
+    Item:
+    - type:CAKE
+    - amount:1
+  bed:
+    Worth: 68.0
+    Item:
+    - type:BED
+    - amount:1
+  13disc:
+    AllowBuy: false
+    Worth: 100.0
+    Item:
+    - type:GOLD_RECORD
+    - amount:1
+  catdisc:
+    AllowBuy: false
+    Worth: 100.0
+    Item:
+    - type:GREEN_RECORD
+    - amount:1
