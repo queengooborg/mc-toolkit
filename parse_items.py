@@ -3,7 +3,9 @@
 #
 # This program takes a decompiled version of Minecraft and create an ordered list of all the blocks and their designated tabs.  After that, by taking an EssentialsX worth.yml, generates an item shop for BossShopPro + BS-ItemShops on Bukkit/Spigot/Paperclip servers.
 # Developed and tested for 1.14 through 1.16, may work on all versions from 1.13 on.
+#
 # Requirements:
+# - Python 3.9 (earlier Python 3 versions may work but not recommended)
 # - A Minecraft Forge MDK
 #   - Initialize using `gradlew eclipse` then `gradlew prepareRunClient` to decompile the Minecraft source code.
 # - PyYAML
