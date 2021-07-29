@@ -99,6 +99,8 @@ itemshop:
     - type:{i}
     - amount:64
 """
+			else:
+				print(f"Warning: item {ikey} is not in worth.yml!")
 
 		with open(os.path.join(outpath, 'Shop{0}.yml'.format(group_title.replace(' ', ''))), 'w') as shopfile:
 			shopfile.write(shop_data)
