@@ -57,6 +57,7 @@ ignored_items = "(" + ")|(".join([
 	'bedrock',
 	'petrifiedoakslab',
 	'grasspath',
+	'dirtpath',
 	'netheritebricks'
 ]) + ")"
 
