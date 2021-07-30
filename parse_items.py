@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+# 
+# EssentialsX to BossShopPro
+# © 2020-2021 Vinyl Darkscratch [https://www.queengoob.org].
+# This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 # This program takes a decompiled version of Minecraft and create an ordered list of all the blocks and their designated tabs.  After that, by taking an EssentialsX worth.yml, generates an item shop for BossShopPro + BS-ItemShops on Bukkit/Spigot/Paperclip servers.
 # Developed and tested for 1.14 through 1.16, may work on all versions from 1.13 on.
