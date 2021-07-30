@@ -10,25 +10,19 @@
 #
 # Requirements:
 # - Python 3.9 (earlier Python 3 versions may work but not recommended)
-# - A Minecraft Forge MDK
-#   - Initialize using `gradlew eclipse` then `gradlew prepareRunClient` to decompile the Minecraft source code.
-# - PyYAML
+# - A Minecraft Forge MDK downloaded to your system
+# - PyYAML (pip install pyyaml)
 #
 
-import os
-import re
+import os, sys, glob, re, subprocess
 from collections import OrderedDict
+from pathlib import Path
 
 import yaml
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+	from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
-    from yaml import Loader, Dumper
-
-# Load Minecraft sources
-minecraft_source = os.path.abspath("/Users/vinyldarkscratch/Developer/Forge MDK/forge-1.16.1-32.0.61-mdk/build/tmp/expandedArchives/forge-1.16.1-32.0.61_mapped_snapshot_20200707-1.16.1-sources.jar_8b7ec6ab0a9d6699309ef77a0ea9c952/net/minecraft")
-itemgroupjava = os.path.join(minecraft_source, 'item', 'ItemGroup.java')
-itemsjava = os.path.join(minecraft_source, 'item', 'Items.java')
+	from yaml import Loader, Dumper
 
 outpath = "./output"
 
@@ -66,6 +60,41 @@ ignored_items = "(" + ")|(".join([
 	'netheritebricks'
 ]) + ")"
 
+def get_mc_version(forge_mdk_path_raw):
+	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
+	build = Path(f"{forge_mdk_path}/build.gradle")
+
+	if not build.exists():
+		print("Error! Forge MDK path is not a valid MDK! (missing build.gradle)")
+		return False
+
+	with open(str(build), 'r') as builddata:
+		for line in builddata.readlines():
+			m = re.search(r"minecraft 'net\.minecraftforge:forge:(.*)-.*'", line)
+			if m:
+				return m.group(1)
+
+	print("Error! Could not determine MC version from MDK.")
+	return False
+
+def prepare_source(forge_mdk_path_raw):
+	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
+	gradlew = Path(f"{forge_mdk_path}/gradlew{'.bat' if os.name == 'nt' else ''}")
+	expandedarchives = Path(f"{forge_mdk_path}/build/tmp/expandedArchives")
+
+	if not gradlew.exists():
+		print("Error! Forge MDK path is not a valid MDK! (missing gradlew)")
+		return False
+
+	if not expandedarchives.exists():
+		print("MDK is uninitialized, performing one-time initialization now...  This may take a while, please be patient!\n")
+		subprocess.run([str(gradlew), 'eclipse'], cwd=str(gradlew.parent))
+		subprocess.run([str(gradlew), 'prepareRunClient'], cwd=str(gradlew.parent))
+		print("\nInitialization complete!")
+
+	source_path = glob.glob(f"{expandedarchives}/forge*mapped_official*-sources.jar*")
+	return Path(f"{source_path[0]}/net/minecraft")
+
 def get_items():
 	items = OrderedDict()
 
@@ -89,7 +118,19 @@ def get_items():
 
 	return items
 
-def make_shops():
+def make_shops(forge_mdk_path):
+	mc_version = get_mc_version(forge_mdk_path)
+	if not mc_version:
+		return False
+
+	return None
+
+	source_path = prepare_source(forge_mdk_path)
+	if not source_path:
+		return False
+
+	items = get_items(source_path)
+
 	os.makedirs(outpath, exist_ok=True)
 
 	main_shop_data = """ShopName: Menu
@@ -144,5 +185,10 @@ itemshop:
 	with open(os.path.join(outpath, 'Menu.yml'), 'w') as shopfile:
 		shopfile.write(main_shop_data)
 
+	return True
+
 if __name__ == '__main__':
-	make_shops()
+	if len(sys.argv) < 2:
+		print('Usage: python parse_items.py <forge_mdk_path>')
+	else:
+		make_shops(sys.argv[1])
