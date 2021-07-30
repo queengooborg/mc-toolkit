@@ -60,6 +60,10 @@ ignored_items = "(" + ")|(".join([
 	'netheritebricks'
 ]) + ")"
 
+def run_subprocess(cmd, cwd):
+	r = subprocess.run(cmd, cwd=str(cwd))
+	return r.returncode
+
 def get_mc_version(forge_mdk_path_raw):
 	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
 	build = Path(f"{forge_mdk_path}/build.gradle")
@@ -81,18 +85,26 @@ def prepare_source(forge_mdk_path_raw):
 	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
 	gradlew = Path(f"{forge_mdk_path}/gradlew{'.bat' if os.name == 'nt' else ''}")
 	expandedarchives = Path(f"{forge_mdk_path}/build/tmp/expandedArchives")
+	sourcepath = Path(f"{expandedarchives}/forge*mapped_*-sources.jar*")
 
 	if not gradlew.exists():
 		print("Error! Forge MDK path is not a valid MDK! (missing gradlew)")
 		return False
 
-	if not expandedarchives.exists():
+	if not (expandedarchives.exists() and len(glob.glob(str(sourcepath)))):
 		print("MDK is uninitialized, performing one-time initialization now...  This may take a while, please be patient!\n")
-		subprocess.run([str(gradlew), 'eclipse'], cwd=str(gradlew.parent))
-		subprocess.run([str(gradlew), 'prepareRunClient'], cwd=str(gradlew.parent))
+
+		if run_subprocess([gradlew, 'eclipse'], gradlew.parent) != 0:
+			print("Failed to initialize MDK, please try again")
+			return False
+
+		if run_subprocess([gradlew, 'prepareRunClient'], gradlew.parent) != 0:
+			print("Failed to initialize MDK, please try again")
+			return False
+
 		print("\nInitialization complete!")
 
-	source_path = glob.glob(f"{expandedarchives}/forge*mapped_official*-sources.jar*")
+	source_path = glob.glob(str(sourcepath))
 	return Path(f"{source_path[0]}/net/minecraft")
 
 def get_items(source_path, mc_version):
