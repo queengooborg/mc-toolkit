@@ -46,6 +46,26 @@ shop_blocks = {
 	'BREWING': 'POTION',
 }
 
+# Items that will not yield a missing item warning
+ignored_items = "(" + ")|(".join([
+	r'.*commandblock.*',
+	r'infested.*',
+	'air',
+	'barrier',
+	'debugstick',
+	'structurevoid',
+	'structureblock',
+	'jigsaw',
+	'endportalframe',
+	'spawner',
+	r'.*spawnegg',
+	'knowledgebook',
+	'bedrock',
+	'petrifiedoakslab',
+	'grasspath',
+	'netheritebricks'
+]) + ")"
+
 def get_items():
 	items = OrderedDict()
 
@@ -105,7 +125,7 @@ itemshop:
     - type:{i}
     - amount:64
 """
-			else:
+			elif not re.match(ignored_items, ikey):
 				print(f"Warning: item {ikey} is not in worth.yml!")
 
 		with open(os.path.join(outpath, 'Shop{0}.yml'.format(group_title.replace(' ', ''))), 'w') as shopfile:
