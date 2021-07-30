@@ -25,14 +25,14 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+# Load Minecraft sources
 minecraft_source = os.path.abspath("/Users/vinyldarkscratch/Developer/Forge MDK/forge-1.16.1-32.0.61-mdk/build/tmp/expandedArchives/forge-1.16.1-32.0.61_mapped_snapshot_20200707-1.16.1-sources.jar_8b7ec6ab0a9d6699309ef77a0ea9c952/net/minecraft")
 itemgroupjava = os.path.join(minecraft_source, 'item', 'ItemGroup.java')
 itemsjava = os.path.join(minecraft_source, 'item', 'Items.java')
 
-worthfile = "./worth.yml"
 outpath = "./output"
 
-worth = yaml.load(open(worthfile, 'r'), Loader=Loader).get('worth', {})
+worth = yaml.load(open("./worth.yml", 'r'), Loader=Loader).get('worth', {})
 
 shop_blocks = {
 	'BUILDING_BLOCKS': 'BRICKS',
