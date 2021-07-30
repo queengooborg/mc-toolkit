@@ -5,6 +5,8 @@ This program takes a decompiled version of Minecraft and creates an ordered list
 
 Developed and tested for 1.14 through 1.17.
 
+*Need a worth.yml with all the new items?  Check out my fork of [X00LA's file](https://github.com/X00LA/Bukkit-Essentials-worth.yml)!  https://gist.github.com/vinyldarkscratch/92d08120f0d6d25175f6c7a30e3ccac7*
+
 ## Requirements
  - Python 3.9 (earlier Python 3 versions may work but not recommended)
  - A Minecraft Forge MDK downloaded to your system
