@@ -95,22 +95,34 @@ def prepare_source(forge_mdk_path_raw):
 	source_path = glob.glob(f"{expandedarchives}/forge*mapped_official*-sources.jar*")
 	return Path(f"{source_path[0]}/net/minecraft")
 
-def get_items():
+def get_items(source_path, mc_version):
+	if mc_version < '1.17':
+		itemgroupname = 'ItemGroup'
+		itemgroupjava = Path(f"{source_path}/item/{itemgroupname}.java")
+		itemsjava = Path(f"{source_path}/item/Items.java")
+	else:
+		itemgroupname = 'CreativeModeTab'
+		itemgroupjava = Path(f"{source_path}/world/item/{itemgroupname}.java")
+		itemsjava = Path(f"{source_path}/world/item/Items.java")
+
 	items = OrderedDict()
 
-	with open(itemgroupjava, 'r') as igj:
+	with open(str(itemgroupjava), 'r') as igj:
 		for line in igj.readlines():
-			match = re.search(r"public static final ItemGroup (\w+) = \(?new ItemGroup\((\d+), \"(\w+)\"\) {", line)
+			match = re.search(rf"public static final {itemgroupname} (\w+) = \(?new {itemgroupname}\((\d+), \"(\w+)\"\) {{", line)
 			if match:
-				items[match.group(1)] = []
+				items[match.group(1).replace('TAB_', '')] = []
+		items['MISC'] = []
 
-	with open(itemsjava, 'r') as ij:
+	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
-			match = re.search(r"public static final Item (\w+) = .+ItemGroup\.(\w+).+", line)
-			if match and match.group(2) in items:
-				items[match.group(2)].append(match.group(1).lower())
-			elif match and match.group(2) == 'MATERIALS':
-				items['MISC'].append(match.group(1).lower())
+			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
+			if match:
+				group = match.group(2).replace('TAB_', '')
+				if group in items:
+					items[group].append(match.group(1).lower())
+				elif group == 'MATERIALS':
+					items['MISC'].append(match.group(1).lower())
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
@@ -123,13 +135,11 @@ def make_shops(forge_mdk_path):
 	if not mc_version:
 		return False
 
-	return None
-
 	source_path = prepare_source(forge_mdk_path)
 	if not source_path:
 		return False
 
-	items = get_items(source_path)
+	all_items = get_items(source_path, mc_version)
 
 	os.makedirs(outpath, exist_ok=True)
 
@@ -142,7 +152,7 @@ signs:
 shop:
 """
 
-	for ig in get_items().items():
+	for ig in all_items.items():
 		group_name, items = ig
 		group_title = group_name.replace('_', ' ').title()
 		group_id = group_title.replace(' ', '')
