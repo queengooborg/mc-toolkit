@@ -58,7 +58,10 @@ ignored_items = "(" + ")|(".join([
 	'petrifiedoakslab',
 	'grasspath',
 	'dirtpath',
-	'netheritebricks'
+	'netheritebricks',
+	'light',
+	'sculksensor', 'sporeblossom', 'hangingroots', # XXX These items will be added in 1.18
+	'cutstandstoneslab', 'powdersnowbucket', 'globebannerpatter' # Typos in 1.17 source code
 ]) + ")"
 
 def run_subprocess(cmd, cwd):
