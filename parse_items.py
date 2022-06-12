@@ -2,7 +2,7 @@
 
 # 
 # EssentialsX to BossShopPro
-# © 2020-2021 Vinyl Darkscratch [https://www.queengoob.org].
+# © 2020-2022 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 # This program takes a decompiled version of Minecraft and create an ordered list of all the blocks and their designated tabs.  After that, by taking an EssentialsX worth.yml, generates an item shop for BossShopPro + BS-ItemShops on Bukkit/Spigot/Paperclip servers.
@@ -24,9 +24,11 @@ try:
 except ImportError:
 	from yaml import Loader, Dumper
 
-outpath = "./output"
+script_dir = os.path.dirname(__file__)
 
-worth = yaml.load(open("./worth.yml", 'r'), Loader=Loader).get('worth', {})
+outpath = os.path.join(script_dir, "output")
+
+worth = yaml.load(open(os.path.join(script_dir, "worth.yml"), 'r'), Loader=Loader).get('worth', {})
 
 shop_blocks = {
 	'BUILDING_BLOCKS': 'BRICKS',
