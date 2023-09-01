@@ -1,0 +1,3 @@
+[submodule "DecompilerMC"]
+	path = DecompilerMC
+	url = https://github.com/hube12/DecompilerMC

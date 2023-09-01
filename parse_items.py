@@ -2,21 +2,23 @@
 
 # 
 # EssentialsX to BossShopPro
-# © 2020-2022 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 # This program takes a decompiled version of Minecraft and create an ordered list of all the blocks and their designated tabs.  After that, by taking an EssentialsX worth.yml, generates an item shop for BossShopPro + BS-ItemShops on Bukkit/Spigot/Paperclip servers.
 # Developed and tested for 1.14 through 1.19.
 #
 # Requirements:
-# - Python 3.9 (earlier Python 3 versions may work but not recommended)
-# - A Minecraft Forge MDK downloaded to your system
+# - Java 8+
+# - Python 3.7+
 # - PyYAML (pip install pyyaml)
+# - DecompilerMC (https://github.com/hube12/DecompilerMC) (added as a submodule)
 #
 
 import os, sys, glob, re, subprocess
 from collections import OrderedDict
 from pathlib import Path
+from DecompilerMC.main import get_latest_version
 
 import yaml
 try:
@@ -67,49 +69,21 @@ ignored_items = "(" + ")|(".join([
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]) + ")"
 
-def run_subprocess(cmd, cwd):
-	r = subprocess.run(cmd, cwd=str(cwd))
+def run_subprocess(cmd, cwd, *args, **kwargs):
+	r = subprocess.run(cmd, cwd=str(cwd), *args, **kwargs)
 	return r.returncode
 
-def get_mc_version(forge_mdk_path_raw):
-	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
-	build = Path(f"{forge_mdk_path}/build.gradle")
+def prepare_source(mc_version):
+	sourcepath = Path(f"DecompilerMC/src/{mc_version}/client")
 
-	if not build.exists():
-		print("Error! Forge MDK path is not a valid MDK! (missing build.gradle)")
-		return False
+	if not (sourcepath.exists()):
+		print("Decompiled sources not found, performing decompilation now...  This may take a while, please be patient!\n")
 
-	with open(str(build), 'r') as builddata:
-		for line in builddata.readlines():
-			m = re.search(r"minecraft 'net\.minecraftforge:forge:(.*)-.*'", line)
-			if m:
-				return m.group(1)
-
-	print("Error! Could not determine MC version from MDK.")
-	return False
-
-def prepare_source(forge_mdk_path_raw):
-	forge_mdk_path = Path(forge_mdk_path_raw).expanduser().absolute()
-	gradlew = Path(f"{forge_mdk_path}/gradlew{'.bat' if os.name == 'nt' else ''}")
-	expandedarchives = Path(f"{forge_mdk_path}/build/tmp/expandedArchives")
-	sourcepath = Path(f"{expandedarchives}/forge*mapped_*-sources.jar*")
-
-	if not gradlew.exists():
-		print("Error! Forge MDK path is not a valid MDK! (missing gradlew)")
-		return False
-
-	if not (expandedarchives.exists() and len(glob.glob(str(sourcepath)))):
-		print("MDK is uninitialized, performing one-time initialization now...  This may take a while, please be patient!\n")
-
-		if run_subprocess([gradlew, 'eclipse'], gradlew.parent) != 0:
-			print("Failed to initialize MDK, please try again")
+		if run_subprocess(["python3", "main.py", f"--mcversion={mc_version}", "--quiet"], Path("DecompilerMC")) != 0:
+			print("Failed to decompile sources, please try again")
 			return False
 
-		if run_subprocess([gradlew, 'prepareRunClient'], gradlew.parent) != 0:
-			print("Failed to initialize MDK, please try again")
-			return False
-
-		print("\nInitialization complete!")
+		print("\nDecompilation complete!")
 
 	source_path = glob.glob(str(sourcepath))
 	return Path(f"{source_path[0]}/net/minecraft")
@@ -149,12 +123,11 @@ def get_items(source_path, mc_version):
 
 	return items
 
-def make_shops(forge_mdk_path):
-	mc_version = get_mc_version(forge_mdk_path)
+def make_shops(mc_version):
 	if not mc_version:
-		return False
+		mc_version = get_latest_version()[1]
 
-	source_path = prepare_source(forge_mdk_path)
+	source_path = prepare_source(mc_version)
 	if not source_path:
 		return False
 
@@ -217,7 +190,4 @@ itemshop:
 	return True
 
 if __name__ == '__main__':
-	if len(sys.argv) < 2:
-		print('Usage: python parse_items.py <forge_mdk_path>')
-	else:
-		make_shops(sys.argv[1])
+	make_shops(sys.argv[1] if len(sys.argv) > 1 else None)
