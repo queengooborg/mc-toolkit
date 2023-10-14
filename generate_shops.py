@@ -20,7 +20,6 @@ except ImportError:
 
 script_dir = Path(os.path.dirname(__file__))
 output_dir = script_dir / "output"
-worth = yaml.load(open(script_dir / "worth.yml", 'r'), Loader=Loader).get('worth', {})
 
 # Items that will not yield a missing item warning
 ignored_items = "(" + ")|(".join([
@@ -47,12 +46,26 @@ ignored_items = "(" + ")|(".join([
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]) + ")"
 
+def get_worth():
+	worth_path = script_dir / "worth.yml"
+
+	if not worth_path.exists():
+		raise Exception('worth.yml not found. The file must be placed in the same file as this script.')
+
+	worth_data = yaml.load(open(worth_path, 'r'), Loader=Loader)
+
+	if 'worth' not in worth_data:
+		raise Exception('worth.yml appears to be an invalid file; missing "worth" key.')
+
+	return worth_data['worth']
+
 def generate_shops(mc_version, outdir="BossShopPro"):
 	if not mc_version:
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version)
+	worth = get_worth()
 
 	outpath = output_dir / outdir
 	os.makedirs(outpath, exist_ok=True)
