@@ -47,7 +47,7 @@ ignored_items = "(" + ")|(".join([
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]) + ")"
 
-def make_shops(mc_version, outdir="BossShopPro"):
+def generate_shops(mc_version, outdir="BossShopPro"):
 	if not mc_version:
 		mc_version = get_latest_version()[1]
 
@@ -116,4 +116,4 @@ def make_shops(mc_version, outdir="BossShopPro"):
 	return True
 
 if __name__ == '__main__':
-	make_shops(sys.argv[1] if len(sys.argv) > 1 else None)
+	generate_shops(sys.argv[1] if len(sys.argv) > 1 else None)
