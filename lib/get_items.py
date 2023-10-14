@@ -9,13 +9,12 @@
 #
 
 import re
-from collections import OrderedDict
 from pathlib import Path
 
 # Get list for 1.20+
 # Experimental, may be buggy
 def get_items_120(source_path, mc_version):
-	items = OrderedDict()
+	items = {}
 
 	creativemodetabjava = Path(f"{source_path}/world/item/CreativeModeTabs.java")
 
@@ -42,18 +41,18 @@ def get_items_113(source_path, mc_version):
 	if mc_version <= '1.12' or mc_version >= '1.20':
 		raise Exception(f'Wrong function used! Tried to use {mc_version}, need 1.13-1.19')
 
-	items = OrderedDict([
-		('BUILDING_BLOCKS', {'block': 'BRICKS', 'items': []}),
-		('DECORATIONS', {'block': 'PEONY', 'items': []}),
-		('REDSTONE', {'block': 'REDSTONE', 'items': []}),
-		('TRANSPORTATION', {'block': 'POWERED_RAIL', 'items': []}),
-		('MISC', {'block': 'LAVA_BUCKET', 'items': []}),
-		('FOOD', {'block': 'APPLE', 'items': []}),
-		('TOOLS', {'block': 'IRON_AXE', 'items': []}),
-		('COMBAT', {'block': 'GOLDEN_SWORD', 'items': []}),
-		('BREWING', {'block': 'POTION', 'items': []}),
-		('MISC', {'block': 'DRAGON_EGG', 'items': []}),
-	])
+	items = {
+		'BUILDING_BLOCKS': {'block': 'BRICKS', 'items': []},
+		'DECORATIONS': {'block': 'PEONY', 'items': []},
+		'REDSTONE': {'block': 'REDSTONE', 'items': []},
+		'TRANSPORTATION': {'block': 'POWERED_RAIL', 'items': []},
+		'MISC': {'block': 'LAVA_BUCKET', 'items': []},
+		'FOOD': {'block': 'APPLE', 'items': []},
+		'TOOLS': {'block': 'IRON_AXE', 'items': []},
+		'COMBAT': {'block': 'GOLDEN_SWORD', 'items': []},
+		'BREWING': {'block': 'POTION', 'items': []},
+		'MISC': {'block': 'DRAGON_EGG', 'items': []},
+	}
 
 	if mc_version >= '1.17':
 		# 1.17-1.19
