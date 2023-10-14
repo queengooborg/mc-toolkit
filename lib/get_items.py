@@ -8,7 +8,7 @@
 # Get items list from the Minecraft source code, sorted by creative mode tabs
 #
 
-import os, re
+import os, re, json
 from pathlib import Path
 
 cache_dir = Path(os.path.dirname(__file__)) / "../output/itemcache"
@@ -31,28 +31,60 @@ def get_items_120(source_path, mc_version):
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				if current_group.group(1) in items:
-					items[current_group.group(1)]['items'].append(itemmatch.group(1).lower())
+					items[current_group.group(1)]['items'][itemmatch.group(1).lower()] = {}
 				else:
-					items[current_group.group(1)] = {'block': current_group.group(2), 'items': [itemmatch.group(1).lower()]}
+					items[current_group.group(1)] = {
+						'block': current_group.group(2),
+						'items': {
+							itemmatch.group(1).lower(): {}
+						}
+					}
 
 	return items
 
 # Get list for 1.13 through 1.19
 def get_items_113(source_path, mc_version):
-	if mc_version <= '1.12' or mc_version >= '1.20':
-		raise Exception(f'Wrong function used! Tried to use {mc_version}, need 1.13-1.19')
-
 	items = {
-		'BUILDING_BLOCKS': {'block': 'BRICKS', 'items': []},
-		'DECORATIONS': {'block': 'PEONY', 'items': []},
-		'REDSTONE': {'block': 'REDSTONE', 'items': []},
-		'TRANSPORTATION': {'block': 'POWERED_RAIL', 'items': []},
-		'MISC': {'block': 'LAVA_BUCKET', 'items': []},
-		'FOOD': {'block': 'APPLE', 'items': []},
-		'TOOLS': {'block': 'IRON_AXE', 'items': []},
-		'COMBAT': {'block': 'GOLDEN_SWORD', 'items': []},
-		'BREWING': {'block': 'POTION', 'items': []},
-		'MISC': {'block': 'DRAGON_EGG', 'items': []},
+		'BUILDING_BLOCKS': {
+			'block': 'BRICKS',
+			'items': {}
+		},
+		'DECORATIONS': {
+			'block': 'PEONY',
+			'items': {}
+		},
+		'REDSTONE': {
+			'block': 'REDSTONE',
+			'items': {}
+		},
+		'TRANSPORTATION': {
+			'block': 'POWERED_RAIL',
+			'items': {}
+		},
+		'MISC': {
+			'block': 'LAVA_BUCKET',
+			'items': {}
+		},
+		'FOOD': {
+			'block': 'APPLE',
+			'items': {}
+		},
+		'TOOLS': {
+			'block': 'IRON_AXE',
+			'items': {}
+		},
+		'COMBAT': {
+			'block': 'GOLDEN_SWORD',
+			'items': {}
+		},
+		'BREWING': {
+			'block': 'POTION',
+			'items': {}
+		},
+		'MISC': {
+			'block': 'DRAGON_EGG',
+			'items': {}
+		},
 	}
 
 	if mc_version >= '1.17':
@@ -78,13 +110,13 @@ def get_items_113(source_path, mc_version):
 			if match:
 				group = match.group(2).replace('TAB_', '')
 				if group in items:
-					items[group]['items'].append(match.group(1).lower())
+					items[group]['items'][match.group(1).lower()] = {}
 				elif group == 'MATERIALS':
-					items['MISC']['items'].append(match.group(1).lower())
+					items['MISC']['items'][match.group(1).lower()] = {}
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
-					items['MISC']['items'].append(match2.group(1).lower())
+					items['MISC']['items'][match2.group(1).lower()] = {}
 
 	return items
 

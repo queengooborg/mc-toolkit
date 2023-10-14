@@ -107,13 +107,13 @@ def generate_shops(mc_version, outdir="BossShopPro"):
 			'itemshop': {}
 		}
 
-		for i in group_data['items']:
-			ikey = i.replace('_', '')
+		for item in group_data['items'].keys():
+			ikey = item.replace('_', '')
 			if ikey in worth:
 				shop_data['itemshop'][ikey] = {
 					'Worth': worth[ikey],
 					'Item': [
-						{'type': i},
+						{'type': item},
 						{'amount': 64}
 					]
 				}
