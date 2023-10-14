@@ -36,6 +36,8 @@ ignored_items = "(" + ")|(".join([
 	r'.*commandblock.*',
 	r'infested.*',
 	'air',
+	'light',
+	'bedrock',
 	'barrier',
 	'debugstick',
 	'structurevoid',
@@ -45,14 +47,12 @@ ignored_items = "(" + ")|(".join([
 	'spawner',
 	r'.*spawnegg',
 	'knowledgebook',
-	'bedrock',
 	'petrifiedoakslab',
 	'grasspath',
 	'dirtpath',
-	'netheritebricks',
-	'light',
 	'reinforceddeepslate',
 	'frogspawn',
+	'netheritebricks', # Non-existent block
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]) + ")"
 
