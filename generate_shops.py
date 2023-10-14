@@ -5,15 +5,6 @@
 # © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
-# This program takes a decompiled version of Minecraft and create an ordered list of all the blocks and their designated tabs.  After that, by taking an EssentialsX worth.yml, generates an item shop for BossShopPro + BS-ItemShops on Bukkit/Spigot/Paperclip servers.
-# Developed and tested for 1.14 through 1.20. (Note: 1.20 implementation is currently experimental)
-#
-# Requirements:
-# - Java 8+
-# - Python 3.7+
-# - PyYAML (pip install pyyaml)
-# - DecompilerMC (https://github.com/hube12/DecompilerMC) (added as a submodule)
-#
 
 import os, sys, glob, re, subprocess
 from pathlib import Path
