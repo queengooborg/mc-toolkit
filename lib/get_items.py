@@ -16,7 +16,6 @@ from pathlib import Path
 # Experimental, may be buggy
 def get_items_120(source_path, mc_version):
 	items = OrderedDict()
-	groups = {}
 
 	creativemodetabjava = Path(f"{source_path}/world/item/CreativeModeTabs.java")
 
@@ -32,31 +31,29 @@ def get_items_120(source_path, mc_version):
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				if current_group.group(1) in items:
-					items[current_group.group(1)].append(itemmatch.group(1).lower())
+					items[current_group.group(1)]['items'].append(itemmatch.group(1).lower())
 				else:
-					groups[current_group.group(1)] = current_group.group(2)
-					items[current_group.group(1)] = [itemmatch.group(1).lower()]
+					items[current_group.group(1)] = {'block': current_group.group(2), 'items': [itemmatch.group(1).lower()]}
 
-	return (groups, items)
+	return items
 
 # Get list for 1.13 through 1.19
 def get_items_113(source_path, mc_version):
 	if mc_version <= '1.12' or mc_version >= '1.20':
 		raise Exception(f'Wrong function used! Tried to use {mc_version}, need 1.13-1.19')
 
-	items = OrderedDict()
-
-	groups = {
-		'BUILDING_BLOCKS': 'BRICKS',
-		'DECORATIONS': 'PEONY',
-		'REDSTONE': 'REDSTONE',
-		'TRANSPORTATION': 'POWERED_RAIL',
-		'MISC': 'LAVA_BUCKET',
-		'FOOD': 'APPLE',
-		'TOOLS': 'IRON_AXE',
-		'COMBAT': 'GOLDEN_SWORD',
-		'BREWING': 'POTION',
-	}
+	items = OrderedDict([
+		('BUILDING_BLOCKS', {'block': 'BRICKS', 'items': []}),
+		('DECORATIONS', {'block': 'PEONY', 'items': []}),
+		('REDSTONE', {'block': 'REDSTONE', 'items': []}),
+		('TRANSPORTATION', {'block': 'POWERED_RAIL', 'items': []}),
+		('MISC', {'block': 'LAVA_BUCKET', 'items': []}),
+		('FOOD', {'block': 'APPLE', 'items': []}),
+		('TOOLS', {'block': 'IRON_AXE', 'items': []}),
+		('COMBAT', {'block': 'GOLDEN_SWORD', 'items': []}),
+		('BREWING', {'block': 'POTION', 'items': []}),
+		('MISC', {'block': 'DRAGON_EGG', 'items': []}),
+	])
 
 	if mc_version >= '1.17':
 		# 1.17-1.19
@@ -73,8 +70,7 @@ def get_items_113(source_path, mc_version):
 		for line in igj.readlines():
 			match = re.search(rf"public static final {itemgroupname} (\w+) = \(?new {itemgroupname}\((\d+), \"(\w+)\"\) {{", line)
 			if match:
-				items[match.group(1).replace('TAB_', '')] = []
-		items['MISC'] = []
+				items[match.group(1).replace('TAB_', '')]['items'] = []
 
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
@@ -82,15 +78,15 @@ def get_items_113(source_path, mc_version):
 			if match:
 				group = match.group(2).replace('TAB_', '')
 				if group in items:
-					items[group].append(match.group(1).lower())
+					items[group]['items'].append(match.group(1).lower())
 				elif group == 'MATERIALS':
-					items['MISC'].append(match.group(1).lower())
+					items['MISC']['items'].append(match.group(1).lower())
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
-					items['MISC'].append(match2.group(1).lower())
+					items['MISC']['items'].append(match2.group(1).lower())
 
-	return (groups, items)
+	return items
 
 def main(source_path, mc_version):
 	if mc_version >= '1.20':

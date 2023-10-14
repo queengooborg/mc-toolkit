@@ -61,7 +61,7 @@ def make_shops(mc_version, outdir="BossShopPro"):
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
-	(groups, all_items) = get_items(source_path, mc_version)
+	items = get_items(source_path, mc_version)
 
 	outpath = output_dir / outdir
 	os.makedirs(outpath, exist_ok=True)
@@ -75,11 +75,9 @@ signs:
 shop:
 """
 
-	for ig in all_items.items():
-		group_name, items = ig
+	for group_name, group_data in items.items():
 		group_title = group_name.replace('_', ' ').title()
 		group_id = group_title.replace(' ', '')
-		if not items: continue
 
 		shop_data = f"""ShopName: {group_id}
 DisplayName: '&8{group_title} &b(%page%/%maxpage%)'
@@ -90,7 +88,7 @@ signs:
 itemshop:
 """
 
-		for i in items:
+		for i in group_data['items']:
 			ikey = i.replace('_', '')
 			if ikey in worth:
 				shop_data += f"""  {ikey}:
@@ -109,7 +107,7 @@ itemshop:
     MenuItem:
     - name:&c{group_title}
     - amount:1
-    - type:{groups[group_name]}
+    - type:{group_data['block']}
     RewardType: SHOP
     Reward: {group_id}
     PriceType: NOTHING
