@@ -16,5 +16,5 @@ Developed and tested for 1.14 through 1.20. (Note: 1.20 implementation is curren
 ## Usage
 
 ```sh
-python3 parse_items.py <forge_mdk_path>
+python3 parse_items.py [mc_version]
 ```
