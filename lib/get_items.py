@@ -12,7 +12,6 @@ import re
 from pathlib import Path
 
 # Get list for 1.20+
-# Experimental, may be buggy
 def get_items_120(source_path, mc_version):
 	items = {}
 
