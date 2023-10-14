@@ -8,8 +8,10 @@
 # Get items list from the Minecraft source code, sorted by creative mode tabs
 #
 
-import re
+import os, re
 from pathlib import Path
+
+cache_dir = Path(os.path.dirname(__file__)) / "../output/itemcache"
 
 # Get list for 1.20+
 def get_items_120(source_path, mc_version):
@@ -87,6 +89,20 @@ def get_items_113(source_path, mc_version):
 	return items
 
 def main(source_path, mc_version):
+	cache_path = cache_dir / f"{mc_version}.json"
+
+	if cache_path.exists():
+		return json.load(open(cache_path, 'r'))
+
+	data = {}
 	if mc_version >= '1.20':
-		return get_items_120(source_path, mc_version)
-	return get_items_113(source_path, mc_version)
+		data = get_items_120(source_path, mc_version)
+	else:
+		data = get_items_113(source_path, mc_version)
+
+	# Cache data
+	os.makedirs(cache_dir, exist_ok=True)
+	with open(cache_path, 'w') as cachefile:
+		json.dump(data, cachefile)
+
+	return data
