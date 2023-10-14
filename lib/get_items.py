@@ -120,10 +120,10 @@ def get_items_113(source_path, mc_version):
 
 	return items
 
-def main(source_path, mc_version):
+def main(source_path, mc_version, no_cache=False):
 	cache_path = cache_dir / f"{mc_version}.json"
 
-	if cache_path.exists():
+	if cache_path.exists() and not no_cache:
 		return json.load(open(cache_path, 'r'))
 
 	data = {}

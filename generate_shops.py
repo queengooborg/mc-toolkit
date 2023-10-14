@@ -6,7 +6,7 @@
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 
-import os, sys, glob, re, subprocess
+import argparse, os, re
 from pathlib import Path
 
 from DecompilerMC.main import get_latest_version
@@ -59,15 +59,14 @@ def get_worth():
 
 	return worth_data['worth']
 
-def generate_shops(mc_version, outdir="BossShopPro"):
+def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro"):
 	if not mc_version:
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
-	items = get_items(source_path, mc_version)
+	items = get_items(source_path, mc_version, no_cache)
 	worth = get_worth()
 
-	outpath = output_dir / outdir
 	os.makedirs(outpath, exist_ok=True)
 
 	main_shop_data = {
@@ -129,4 +128,9 @@ def generate_shops(mc_version, outdir="BossShopPro"):
 	return True
 
 if __name__ == '__main__':
-	generate_shops(sys.argv[1] if len(sys.argv) > 1 else None)
+	parser = argparse.ArgumentParser(prog="generate_shops", description="Generate BossShopPro configuration files using an EssentialsX worth.yml and Minecraft deobfuscated source code")
+	parser.add_argument('mc_version', nargs='?')
+	parser.add_argument('-n', '--no_cache', action='store_true')
+	args = parser.parse_args()
+
+	generate_shops(args.mc_version, no_cache=args.no_cache)
