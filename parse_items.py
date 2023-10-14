@@ -66,55 +66,61 @@ def make_shops(mc_version, outdir="BossShopPro"):
 	outpath = output_dir / outdir
 	os.makedirs(outpath, exist_ok=True)
 
-	main_shop_data = """ShopName: Menu
-DisplayName: '&8Menu'
-Command: menu
-signs:
-  text: '[Shop]'
-  NeedPermissionToCreateSign: true
-shop:
-"""
+	main_shop_data = {
+		'ShopName': 'Menu',
+		'DisplayName': '&8Menu',
+		'Command': 'menu',
+		'signs': {
+			'text': '[Shop]',
+			'NeedPermissionToCreateSign': True
+		},
+		'shop': {}
+	}
 
 	for group_name, group_data in items.items():
 		group_title = group_name.replace('_', ' ').title()
 		group_id = group_title.replace(' ', '')
 
-		shop_data = f"""ShopName: {group_id}
-DisplayName: '&8{group_title} &b(%page%/%maxpage%)'
-Command: shop-{group_name.lower()}
-signs:
-  text: '[Shop{group_id}]'
-  NeedPermissionToCreateSign: true
-itemshop:
-"""
+		main_shop_data['shop'][group_id] = {
+			'MenuItem': [
+				{'name': f'&c{group_title}'},
+				{'amount': 1},
+				{'type': group_data['block']}
+			],
+			'RewardType': 'SHOP',
+			'Reward': group_id,
+			'PriceType': 'NOTHING'
+		}
+
+		shop_data = {
+			'ShopName': group_id,
+			'DisplayName': f'&8{group_title} &b(%page%/%maxpage%)',
+			'Command': f'shop-{group_name.lower()}',
+			'signs': {
+				'text': f'[Shop{group_id}]',
+				'NeedPermissionToCreateSign': True
+			},
+			'itemshop': {}
+		}
 
 		for i in group_data['items']:
 			ikey = i.replace('_', '')
 			if ikey in worth:
-				shop_data += f"""  {ikey}:
-    Worth: {worth[ikey]}
-    Item:
-    - type:{i}
-    - amount:64
-"""
+				shop_data['itemshop'][ikey] = {
+					'Worth': worth[ikey],
+					'Item': [
+						{'type': i},
+						{'amount': 64}
+					]
+				}
 			elif not re.match(ignored_items, ikey):
 				print(f"Warning: item {ikey} is not in worth.yml!")
 
 		with open(outpath / 'Shop{0}.yml'.format(group_title.replace(' ', '')), 'w') as shopfile:
-			shopfile.write(shop_data)
-
-		main_shop_data += f"""  {group_id}:
-    MenuItem:
-    - name:&c{group_title}
-    - amount:1
-    - type:{group_data['block']}
-    RewardType: SHOP
-    Reward: {group_id}
-    PriceType: NOTHING
-"""
+			shopfile.write(yaml.dump(shop_data, Dumper=Dumper, sort_keys=False))
 
 	with open(outpath / 'Menu.yml', 'w') as shopfile:
-		shopfile.write(main_shop_data)
+		shopfile.write(yaml.dump(main_shop_data, Dumper=Dumper, sort_keys=False))
 
 	return True
 
