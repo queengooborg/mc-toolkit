@@ -28,7 +28,7 @@ except ImportError:
 	from yaml import Loader, Dumper
 
 script_dir = Path(os.path.dirname(__file__))
-outpath = script_dir / "output"
+output_dir = script_dir / "output"
 worth = yaml.load(open(script_dir / "worth.yml", 'r'), Loader=Loader).get('worth', {})
 
 # Items that will not yield a missing item warning
@@ -56,13 +56,14 @@ ignored_items = "(" + ")|(".join([
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]) + ")"
 
-def make_shops(mc_version):
+def make_shops(mc_version, outdir="BossShopPro"):
 	if not mc_version:
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
 	(groups, all_items) = get_items(source_path, mc_version)
 
+	outpath = output_dir / outdir
 	os.makedirs(outpath, exist_ok=True)
 
 	main_shop_data = """ShopName: Menu
@@ -101,7 +102,7 @@ itemshop:
 			elif not re.match(ignored_items, ikey):
 				print(f"Warning: item {ikey} is not in worth.yml!")
 
-		with open(os.path.join(outpath, 'Shop{0}.yml'.format(group_title.replace(' ', ''))), 'w') as shopfile:
+		with open(outpath / 'Shop{0}.yml'.format(group_title.replace(' ', '')), 'w') as shopfile:
 			shopfile.write(shop_data)
 
 		main_shop_data += f"""  {group_id}:
@@ -114,7 +115,7 @@ itemshop:
     PriceType: NOTHING
 """
 
-	with open(os.path.join(outpath, 'Menu.yml'), 'w') as shopfile:
+	with open(outpath / 'Menu.yml', 'w') as shopfile:
 		shopfile.write(main_shop_data)
 
 	return True
