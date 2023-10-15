@@ -31,12 +31,12 @@ def get_items_120(source_path, mc_version):
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				if current_group.group(1) in items:
-					items[current_group.group(1)]['items'][itemmatch.group(1).lower()] = {}
+					items[current_group.group(1)]['items'][itemmatch.group(1)] = {}
 				else:
 					items[current_group.group(1)] = {
 						'block': current_group.group(2),
 						'items': {
-							itemmatch.group(1).lower(): {}
+							itemmatch.group(1): {}
 						}
 					}
 
@@ -110,13 +110,13 @@ def get_items_113(source_path, mc_version):
 			if match:
 				group = match.group(2).replace('TAB_', '')
 				if group in items:
-					items[group]['items'][match.group(1).lower()] = {}
+					items[group]['items'][match.group(1)] = {}
 				elif group == 'MATERIALS':
-					items['MISC']['items'][match.group(1).lower()] = {}
+					items['MISC']['items'][match.group(1)] = {}
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
-					items['MISC']['items'][match2.group(1).lower()] = {}
+					items['MISC']['items'][match2.group(1)] = {}
 
 	return items
 
