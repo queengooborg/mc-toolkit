@@ -51,6 +51,143 @@ def convert_recipe_pattern(ingredients, raw_pattern):
 
 	return pattern, count
 
+# Create recipe for common block variants
+def create_variant_recipe(variant, cost):
+	if variant == 'button':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 1,
+			},
+			'pattern': None
+		}
+	if variant == 'chiseled':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 2,
+			},
+			'pattern': [[cost], [cost]]
+		}
+	if variant == 'cracked':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 1
+			},
+			'pattern': 'furnace'
+		}
+	if variant == 'cut':
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 4,
+			},
+			'pattern': [
+				[cost, cost],
+				[cost, cost]
+			]
+		}
+	if variant == 'door':
+		return {
+			'count': 3,
+			'ingredients': {
+				cost: 6,
+			},
+			'pattern': [
+				[cost, cost],
+				[cost, cost],
+				[cost, cost]
+			]
+		}
+	if variant in ['fence', 'customFence']:
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 4,
+				'STICK': 2
+			},
+			'pattern': [
+				[cost, 'STICK', cost],
+				[cost, 'STICK', cost]
+			]
+		}
+	if variant in ['fenceGate', 'customFenceGate']:
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 2,
+				'STICK': 4
+			},
+			'pattern': [
+				['STICK', cost, 'STICK'],
+				['STICK', cost, 'STICK']
+			]
+		}
+	if variant in ['mosaic', 'pressurePlate']:
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 2,
+			},
+			'pattern': [[cost], [cost]]
+		}
+	if variant == 'polished':
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 4
+			},
+			'pattern': [
+				[cost, cost],
+				[cost, cost]
+			]
+		}
+	if variant == 'sign':
+		return {
+			'count': 3,
+			'ingredients': {
+				cost: 6,
+				'STICK': 1
+			},
+			'pattern': [
+				[cost, cost, cost],
+				[cost, cost, cost],
+				['', 'STICK', '']
+			]
+		}
+	if variant == 'slab':
+		return {
+			'count': 6,
+			'ingredients': {
+				cost: 3,
+			},
+			'pattern': [[cost, cost, cost]]
+		}
+	if variant == 'stairs':
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 6
+			},
+			'pattern': [
+				[cost, '', ''],
+				[cost, cost, ''],
+				[cost, cost, cost]
+			]
+		}
+	if variant in ['trapdoor', 'wall']:
+		return {
+			'count': 2,
+			'ingredients': {
+				cost: 6,
+			},
+			'pattern': [
+				[cost, cost, cost],
+				[cost, cost, cost]
+			]
+		}
+
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 def simple_func(func_type, match):
 	cost = match.group(5) or match.group(6)
@@ -99,13 +236,7 @@ def simple_func(func_type, match):
 			'pattern': [[cost, cost]]
 		}
 	elif func_type in ['chiseled', 'chiseledBuilder']:
-		return {
-			'count': 1,
-			'ingredients': {
-				cost: 2,
-			},
-			'pattern': [[cost], [cost]]
-		}
+		return create_variant_recipe('slab', cost)
 	elif func_type == 'chestBoat':
 		return {
 			'count': 1,
@@ -139,28 +270,9 @@ def simple_func(func_type, match):
 			'pattern': None
 		}
 	elif func_type in ['cut', 'cutBuilder']:
-		return {
-			'count': 4,
-			'ingredients': {
-				cost: 4,
-			},
-			'pattern': [
-				[cost, cost],
-				[cost, cost]
-			]
-		}
+		return create_variant_recipe('cut', cost)
 	elif func_type == 'doorBuilder':
-		return {
-			'count': 3,
-			'ingredients': {
-				cost: 6,
-			},
-			'pattern': [
-				[cost, cost],
-				[cost, cost],
-				[cost, cost]
-			]
-		}
+		return create_variant_recipe('door', cost)
 	elif func_type == 'hangingSign':
 		return {
 			'count': 6,
@@ -175,13 +287,7 @@ def simple_func(func_type, match):
 			]
 		}
 	elif func_type == 'mosaicBuilder':
-		return {
-			'count': 1,
-			'ingredients': {
-				cost: 2,
-			},
-			'pattern': [[cost], [cost]]
-		}
+		return create_variant_recipe('mosaic', cost)
 	elif func_type in ['planksFromLog', 'planksFromLogs']:
 		return {
 			'count': count or 4,
@@ -191,16 +297,7 @@ def simple_func(func_type, match):
 			'pattern': None
 		}
 	elif func_type in ['polished', 'polishedBuilder']:
-		return {
-			'count': 4,
-			'ingredients': {
-				cost: 4
-			},
-			'pattern': [
-				[cost, cost],
-				[cost, cost]
-			]
-		}
+		return create_variant_recipe('polished', cost)
 	elif func_type == 'pressurePlate':
 		return {
 			'count': 2,
@@ -210,25 +307,9 @@ def simple_func(func_type, match):
 			'pattern': [[cost, cost]]
 		}
 	elif func_type in ['slab', 'slabBuilder']:
-		return {
-			'count': 6,
-			'ingredients': {
-				cost: 3,
-			},
-			'pattern': [[cost, cost, cost]]
-		}
+		return create_variant_recipe('slab', cost)
 	elif func_type == 'stairBuilder':
-		return {
-			'count': 4,
-			'ingredients': {
-				cost: 6
-			},
-			'pattern': [
-				[cost, '', ''],
-				[cost, cost, ''],
-				[cost, cost, cost]
-			]
-		}
+		return create_variant_recipe('stairs', cost)
 	elif func_type == 'stainedGlassFromGlassAndDye':
 		return {
 			'count': 8,
@@ -311,7 +392,7 @@ def simple_func(func_type, match):
 		print(match.group())
 		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
-def process_recipe_line(recipes, line, dye_colors, smeltables):
+def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables):
 	# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
 	if 'SimpleCookingRecipeBuilder.blasting(' in line or 'VanillaRecipeProvider.oreBlasting(' in line:
 		return
@@ -506,6 +587,7 @@ def get_recipes(source_path, simplest_only=True):
 			match = re.match(r'^\s+public static final /\* enum \*/ DyeColor ([\w_]+) = new DyeColor\(', line)
 			if match:
 				dye_colors.append(match.group(1))
+				continue
 
 	# Get recipes for cooked food
 	with open(Path(f"{source_path}/data/recipes/RecipeProvider.java")) as dcj:
@@ -519,31 +601,45 @@ def get_recipes(source_path, simplest_only=True):
 					},
 					'pattern': 'furnace'
 				})
+				continue
 
 	# Get recipes for waxable items
 	with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
 		for line in dcj.readlines():
-			match = re.match(rf'^public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
+			match = re.match(rf'^\s+public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
 			if match:
 				pairs = re.finditer(rf'\.put\(\(Object\){one_ingredient_regex}, \(Object\){one_ingredient_regex}\)', line)
-				add_recipe(recipes, match.group(2), {
-					'count': 1,
-					'ingredients': {
-						match.group(1): 1,
-						'HONEYCOMB': 1
-					},
-					'pattern': None
-				})
+				for pair in pairs:
+					add_recipe(recipes, pair.group(2), {
+						'count': 1,
+						'ingredients': {
+							pair.group(1): 1,
+							'HONEYCOMB': 1
+						},
+						'pattern': None
+					})
+				continue
 
-	with open(Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")) as rj:
-		for line in rj.readlines():
+	# Get recipes for block families (stairs, fences, etc.)
+	with open(Path(f"{source_path}/data/BlockFamilies.java")) as bfj:
+		for line in bfj.readlines():
+			match = re.match(rf'^\s+public static final BlockFamily [\w_]+ = BlockFamilies\.familyBuilder\({one_ingredient_regex}\)(.*)\.getFamily\(\);$', line)
+			if match:
+				sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
+				for s in sets:
+					variant = s.group(1)
+					add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
+
+	with open(Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")) as vrpj:
+		for line in vrpj.readlines():
 			# Get smeltables lists
 			match = re.match(rf'^\s+private static final ImmutableList<ItemLike> (\w+_SMELTABLES) = ImmutableList\.of\(\(Object\)Items\.([\w_]+)(?:, \(Object\)Items\.([\w_]+))*\);', line)
 			if match:
 				smeltables[match.group(1)] = match.groups()[1:]
 				continue
 
-			process_recipe_line(recipes, line, dye_colors, smeltables)
+			# Process recipe lines
+			process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables)
 
 	return recipes
 
