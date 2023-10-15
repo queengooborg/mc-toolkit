@@ -50,7 +50,7 @@ def convert_recipe_pattern(ingredients, raw_pattern):
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 def simple_func(func_type, match):
 	cost = match.group(5) or match.group(6)
-	count = match.group(8) or 1
+	count = int(match.group(8) or 1)
 
 	if func_type == 'banner':
 		return {
@@ -59,7 +59,7 @@ def simple_func(func_type, match):
 				cost: 6,
 				'STICK': 1
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost, cost],
 				[cost, cost, cost],
 				['', 'STICK', '']
@@ -72,7 +72,7 @@ def simple_func(func_type, match):
 				cost: 3,
 				'PLANKS': 3
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost, cost],
 				['PLANKS', 'PLANKS', 'PLANKS']
 			]
@@ -84,7 +84,7 @@ def simple_func(func_type, match):
 				cost: 1,
 				'CANDLE': 1
 			},
-			pattern: None
+			'pattern': None
 		}
 	elif func_type == 'carpet':
 		return {
@@ -92,7 +92,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 2
 			},
-			pattern: [[cost, cost]]
+			'pattern': [[cost, cost]]
 		}
 	elif func_type in ['chiseled', 'chiseledBuilder']:
 		return {
@@ -100,7 +100,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 2,
 			},
-			pattern: [[cost], [cost]]
+			'pattern': [[cost], [cost]]
 		}
 	elif func_type == 'chestBoat':
 		return {
@@ -109,7 +109,7 @@ def simple_func(func_type, match):
 				cost: 1,
 				'CHEST': 1
 			},
-			pattern: None
+			'pattern': None
 		}
 	elif func_type == 'coloredTerracottaFromTerracottaAndDye':
 		return {
@@ -118,7 +118,7 @@ def simple_func(func_type, match):
 				cost: 1,
 				'TERRACOTTA': 8
 			},
-			pattern: [
+			'pattern': [
 				['TERRACOTTA', 'TERRACOTTA', 'TERRACOTTA'],
 				['TERRACOTTA', cost, 'TERRACOTTA'],
 				['TERRACOTTA', 'TERRACOTTA', 'TERRACOTTA']
@@ -132,7 +132,7 @@ def simple_func(func_type, match):
 				'SAND': 4,
 				'GRAVEL': 4
 			},
-			pattern: None
+			'pattern': None
 		}
 	elif func_type in ['cut', 'cutBuilder']:
 		return {
@@ -140,7 +140,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 4,
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost],
 				[cost, cost]
 			]
@@ -151,7 +151,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 6,
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost],
 				[cost, cost],
 				[cost, cost]
@@ -164,7 +164,7 @@ def simple_func(func_type, match):
 				cost: 6,
 				'CHAIN': 2,
 			},
-			pattern: [
+			'pattern': [
 				['CHAIN', '', 'CHAIN'],
 				[cost, cost, cost],
 				[cost, cost, cost]
@@ -176,7 +176,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 2,
 			},
-			pattern: [[cost], [cost]]
+			'pattern': [[cost], [cost]]
 		}
 	elif func_type in ['planksFromLog', 'planksFromLogs']:
 		return {
@@ -184,7 +184,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 1,
 			},
-			pattern: None
+			'pattern': None
 		}
 	elif func_type in ['polished', 'polishedBuilder']:
 		return {
@@ -192,7 +192,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 4
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost],
 				[cost, cost]
 			]
@@ -203,7 +203,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 2
 			},
-			pattern: [[cost, cost]]
+			'pattern': [[cost, cost]]
 		}
 	elif func_type in ['slab', 'slabBuilder']:
 		return {
@@ -211,7 +211,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 3,
 			},
-			pattern: [[cost, cost, cost]]
+			'pattern': [[cost, cost, cost]]
 		}
 	elif func_type == 'stairBuilder':
 		return {
@@ -219,7 +219,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 6
 			},
-			pattern: [
+			'pattern': [
 				[cost, '', ''],
 				[cost, cost, ''],
 				[cost, cost, cost]
@@ -232,7 +232,7 @@ def simple_func(func_type, match):
 				cost: 1,
 				'GLASS': 8,
 			},
-			pattern: [
+			'pattern': [
 				['GLASS', 'GLASS', 'GLASS'],
 				['GLASS', cost, 'GLASS'],
 				['GLASS', 'GLASS', 'GLASS']
@@ -245,7 +245,7 @@ def simple_func(func_type, match):
 				cost: 1,
 				'GLASS_PANE': 8,
 			},
-			pattern: [
+			'pattern': [
 				['GLASS_PANE', 'GLASS_PANE', 'GLASS_PANE'],
 				['GLASS_PANE', cost, 'GLASS_PANE'],
 				['GLASS_PANE', 'GLASS_PANE', 'GLASS_PANE']
@@ -257,7 +257,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 6
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost, cost],
 				[cost, cost, cost]
 			]
@@ -268,7 +268,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 1
 			},
-			pattern: 'stonecutter'
+			'pattern': 'stonecutter'
 		}
 	elif func_type in ['wall', 'wallBuilder']:
 		return {
@@ -276,7 +276,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 6
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost, cost],
 				[cost, cost, cost]
 			]
@@ -287,7 +287,7 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 5
 			},
-			pattern: [
+			'pattern': [
 				[cost, '', cost],
 				[cost, cost, cost]
 			]
@@ -298,12 +298,13 @@ def simple_func(func_type, match):
 			'ingredients': {
 				cost: 4
 			},
-			pattern: [
+			'pattern': [
 				[cost, cost],
 				[cost, cost]
 			]
 		}
 	else:
+		print(match.group())
 		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
 # Get item recipes
@@ -325,7 +326,7 @@ def get_recipes(source_path, simplest_only=True):
 				dye_colors.append(match.group(1))
 
 	# Get recipes for cooked food
-	with open(Path(f"{source_path}/data/recipes/packs/RecipeProvider.java")) as dcj:
+	with open(Path(f"{source_path}/data/recipes/RecipeProvider.java")) as dcj:
 		for line in dcj.readlines():
 			match = re.match(rf'^\s+RecipeProvider\.simpleCookingRecipe\(recipeOutput, string, recipeSerializer, n, {one_ingredient_regex}, {one_ingredient_regex}\);', line)
 			if match:
@@ -337,16 +338,31 @@ def get_recipes(source_path, simplest_only=True):
 					'pattern': 'furnace'
 				})
 
+	# Get recipes for waxable items
+	with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
+		for line in dcj.readlines():
+			match = re.match(rf'^public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
+			if match:
+				pairs = re.finditer(rf'\.put\(\(Object\){one_ingredient_regex}, \(Object\){one_ingredient_regex}\)', line)
+				add_recipe(recipes, match.group(2), {
+					'count': 1,
+					'ingredients': {
+						match.group(1): 1,
+						'HONEYCOMB': 1
+					},
+					'pattern': None
+				})
+
 	with open(Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")) as rj:
 		for line in rj.readlines():
 			# Get smeltables lists
-			match = re.match(rf'^\s+private static final ImmutableList<ItemLike> (\w+)_SMELTABLES = ImmutableList\.of\(\(Object\)Items\.([\w_]+)(?:, \(Object\)Items\.([\w_]+))*\);', line)
+			match = re.match(rf'^\s+private static final ImmutableList<ItemLike> (\w+_SMELTABLES) = ImmutableList\.of\(\(Object\)Items\.([\w_]+)(?:, \(Object\)Items\.([\w_]+))*\);', line)
 			if match:
 				smeltables[match.group(1)] = match.groups()[1:]
 				continue
 
 			# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
-			if 'SimpleCookingRecipeBuilder.blasting(' in line:
+			if 'SimpleCookingRecipeBuilder.blasting(' in line or 'VanillaRecipeProvider.oreBlasting(' in line:
 				continue
 
 			# Shapeless recipes
@@ -390,15 +406,40 @@ def get_recipes(source_path, simplest_only=True):
 				})
 				continue
 
+			# Ore smelting recipes
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oreSmelting\(recipeOutput, ([\w_]+), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+			if match:
+				add_recipe(recipes, match.group(2), {
+					'count': 1,
+					'ingredients': {
+						format_item_name(smeltables.get(match.group(1))): 1
+					},
+					'pattern': 'furnace'
+				})
+				continue
+
 			# Stonecutting recipes
 			match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}(?:, (\d+))?\)', line)
 			if match:
 				add_recipe(recipes, match.group(2), {
-					'count': mach.group(3) or 1,
+					'count': match.group(3) or 1,
 					'ingredients': {
 						match.group(1): 1
 					},
 					'pattern': 'stonecutter'
+				})
+				continue
+
+			# Netherite smithing recipes
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.netheriteSmithing\(recipeOutput, {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+			if match:
+				add_recipe(recipes, match.group(2), {
+					'count': 1,
+					'ingredients': {
+						match.group(1): 1,
+						'NETHERITE_INGOT': 1
+					},
+					'pattern': 'smithingTable'
 				})
 				continue
 
@@ -428,7 +469,7 @@ def get_recipes(source_path, simplest_only=True):
 							match.group(3): 1,
 							'DIAMOND': 7,
 						},
-						pattern: [
+						'pattern': [
 							['DIAMOND', match.group(2), 'DIAMOND'],
 							['DIAMOND', match.group(3), 'DIAMOND'],
 							['DIAMOND', 'DIAMOND', 'DIAMOND'],
@@ -437,10 +478,10 @@ def get_recipes(source_path, simplest_only=True):
 					continue
 
 			# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}, "[\w_]+"(?:, (\d+))?\);', line)
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (/P<count>\d+))?', line)
 			if match:
 				add_recipe(recipes, match.group(2), {
-					'count': match.group(4) or 1,
+					'count': int(match.groupdict().get('count', 1)),
 					'ingredients': {
 						match.group(3): 1
 					},
@@ -449,7 +490,7 @@ def get_recipes(source_path, simplest_only=True):
 				continue
 
 			# 2x2/3x3 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}, "[\w_]+"(?:, (\d+))?\);', line)
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\(recipeOutput(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
 			if match:
 				if match.group(1) == 'twoByTwo':
 					add_recipe(recipes, match.group(2), {
@@ -472,10 +513,32 @@ def get_recipes(source_path, simplest_only=True):
 					})
 				continue
 
+			# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:WithCustom(?:Packing|Unpacking))?\(recipeOutput, RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+ {one_ingredient_regex}', line)
+			if match:
+				if not simplest_only:
+					add_recipe(recipes, match.group(1), {
+						'count': 9,
+						'ingredients': {
+							match.group(2): 1
+						},
+						'pattern': None
+					})
+				add_recipe(recipes, match.group(2), {
+					'count': 1,
+					'ingredients': {
+						match.group(1): 9
+					},
+					'pattern': None
+				})
+				continue
+
 			# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\((?:recipeOutput, )?(?:RecipeCategory\.[\w_]+, )?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
 			if match:
 				match_type = match.group(1)
+				if match_type == 'stainedGlassPaneFromGlassPaneAndDye' and simplest_only:
+					continue # Only use "stainedGlassPaneFromStainedGlass"
 				add_recipe(recipes, match.group(2), simple_func(match_type, match))
 				continue
 
