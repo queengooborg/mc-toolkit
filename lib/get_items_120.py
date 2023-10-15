@@ -11,6 +11,10 @@
 import os, re, json
 from pathlib import Path
 
+line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
+one_ingredient_regex = r"(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
+ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
+
 def format_item_name(name):
 	if type(name) == str:
 		return name
@@ -307,16 +311,194 @@ def simple_func(func_type, match):
 		print(match.group())
 		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
+def process_recipe_line(recipes, line, dye_colors, smeltables):
+	# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
+	if 'SimpleCookingRecipeBuilder.blasting(' in line or 'VanillaRecipeProvider.oreBlasting(' in line:
+		return
+
+	# Shapeless recipes
+	match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	if match:
+		add_recipe(recipes, match.group(1), {
+			'count': int(match.group(2) or 1),
+			'ingredients': {
+				format_item_name(i.group(1) or i.groups()[1:-1]): int(i.groupdict().get('count', 1)) for i in re.finditer(rf'\.requires\({ingredient_regex}(?:, (/P<count>\d+))?\)', line)
+			},
+			'pattern': None
+		})
+		return
+
+	# Shaped recipes
+	match = re.match(rf'{line_prefix}ShapedRecipeBuilder\.shaped\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	if match:
+		item = match.group(1)
+		ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}
+		raw_pattern = [list(p.group(1)) for p in re.finditer(r'\.pattern\("([^"]+)"\)', line)]
+
+		pattern, count = convert_recipe_pattern(ingredients, raw_pattern)
+
+		add_recipe(recipes, item, {
+			'count': int(match.group(2) or 1),
+			'ingredients': count,
+			'pattern': pattern
+		})
+
+		return
+
+	# Smelting recipes
+	match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': 1,
+			'ingredients': {
+				match.group(1): 1
+			},
+			'pattern': 'furnace'
+		})
+		return
+
+	# Ore smelting recipes
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oreSmelting\(recipeOutput, ([\w_]+), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': 1,
+			'ingredients': {
+				format_item_name(smeltables.get(match.group(1))): 1
+			},
+			'pattern': 'furnace'
+		})
+		return
+
+	# Stonecutting recipes
+	match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}(?:, (\d+))?\)', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': match.group(3) or 1,
+			'ingredients': {
+				match.group(1): 1
+			},
+			'pattern': 'stonecutter'
+		})
+		return
+
+	# Netherite smithing recipes
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.netheriteSmithing\(recipeOutput, {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': 1,
+			'ingredients': {
+				match.group(1): 1,
+				'NETHERITE_INGOT': 1
+			},
+			'pattern': 'smithingTable'
+		})
+		return
+
+	if not simplest_only:
+		# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
+		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.colorBlockWithDye\(recipeOutput, list, list\d, "(\w+)"\)', line)
+		if match:
+			item = match.group(1).upper()
+			for color in dye_colors:
+				add_recipe(recipes, f'{color}_{item}', {
+					'count': 1,
+					'ingredients': {
+						item: 1,
+						f'{color}_DYE': 1
+					},
+					'pattern': None
+				})
+			return
+
+		# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\(recipeOutput, \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
+		if match:
+			add_recipe(recipes, match.group(2), {
+				'count': 2,
+				'ingredients': {
+					match.group(2): 1,
+					match.group(3): 1,
+					'DIAMOND': 7,
+				},
+				'pattern': [
+					['DIAMOND', match.group(2), 'DIAMOND'],
+					['DIAMOND', match.group(3), 'DIAMOND'],
+					['DIAMOND', 'DIAMOND', 'DIAMOND'],
+				]
+			})
+			return
+
+	# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (/P<count>\d+))?', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': int(match.groupdict().get('count', 1)),
+			'ingredients': {
+				match.group(3): 1
+			},
+			'pattern': None
+		})
+		return
+
+	# 2x2/3x3 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\(recipeOutput(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
+	if match:
+		if match.group(1) == 'twoByTwo':
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					match.group(3): 4
+				},
+				'pattern': [
+					[match.group(3), match.group(3)],
+					[match.group(3), match.group(3)]
+				]
+			})
+		else:
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					match.group(3): 9
+				},
+				'pattern': None
+			})
+		return
+
+	# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:WithCustom(?:Packing|Unpacking))?\(recipeOutput, RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+ {one_ingredient_regex}', line)
+	if match:
+		if not simplest_only:
+			add_recipe(recipes, match.group(1), {
+				'count': 9,
+				'ingredients': {
+					match.group(2): 1
+				},
+				'pattern': None
+			})
+		add_recipe(recipes, match.group(2), {
+			'count': 1,
+			'ingredients': {
+				match.group(1): 9
+			},
+			'pattern': None
+		})
+		return
+
+	# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\((?:recipeOutput, )?(?:RecipeCategory\.[\w_]+, )?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
+	if match:
+		match_type = match.group(1)
+		if match_type == 'stainedGlassPaneFromGlassPaneAndDye' and simplest_only:
+			return # Only use "stainedGlassPaneFromStainedGlass"
+		add_recipe(recipes, match.group(2), simple_func(match_type, match))
+		return
+
 # Get item recipes
 def get_recipes(source_path, simplest_only=True):
 	recipes = {}
 
 	dye_colors = []
 	smeltables = {}
-
-	line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
-	one_ingredient_regex = r"(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
-	ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
 
 	# Get all dye colors
 	with open(Path(f"{source_path}/world/item/DyeColor.java")) as dcj:
@@ -361,186 +543,7 @@ def get_recipes(source_path, simplest_only=True):
 				smeltables[match.group(1)] = match.groups()[1:]
 				continue
 
-			# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
-			if 'SimpleCookingRecipeBuilder.blasting(' in line or 'VanillaRecipeProvider.oreBlasting(' in line:
-				continue
-
-			# Shapeless recipes
-			match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
-			if match:
-				add_recipe(recipes, match.group(1), {
-					'count': int(match.group(2) or 1),
-					'ingredients': {
-						format_item_name(i.group(1) or i.groups()[1:-1]): int(i.groupdict().get('count', 1)) for i in re.finditer(rf'\.requires\({ingredient_regex}(?:, (/P<count>\d+))?\)', line)
-					},
-					'pattern': None
-				})
-				continue
-
-			# Shaped recipes
-			match = re.match(rf'{line_prefix}ShapedRecipeBuilder\.shaped\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
-			if match:
-				item = match.group(1)
-				ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}
-				raw_pattern = [list(p.group(1)) for p in re.finditer(r'\.pattern\("([^"]+)"\)', line)]
-
-				pattern, count = convert_recipe_pattern(ingredients, raw_pattern)
-
-				add_recipe(recipes, item, {
-					'count': int(match.group(2) or 1),
-					'ingredients': count,
-					'pattern': pattern
-				})
-
-				continue
-
-			# Smelting recipes
-			match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
-			if match:
-				add_recipe(recipes, match.group(2), {
-					'count': 1,
-					'ingredients': {
-						match.group(1): 1
-					},
-					'pattern': 'furnace'
-				})
-				continue
-
-			# Ore smelting recipes
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oreSmelting\(recipeOutput, ([\w_]+), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
-			if match:
-				add_recipe(recipes, match.group(2), {
-					'count': 1,
-					'ingredients': {
-						format_item_name(smeltables.get(match.group(1))): 1
-					},
-					'pattern': 'furnace'
-				})
-				continue
-
-			# Stonecutting recipes
-			match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}(?:, (\d+))?\)', line)
-			if match:
-				add_recipe(recipes, match.group(2), {
-					'count': match.group(3) or 1,
-					'ingredients': {
-						match.group(1): 1
-					},
-					'pattern': 'stonecutter'
-				})
-				continue
-
-			# Netherite smithing recipes
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.netheriteSmithing\(recipeOutput, {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
-			if match:
-				add_recipe(recipes, match.group(2), {
-					'count': 1,
-					'ingredients': {
-						match.group(1): 1,
-						'NETHERITE_INGOT': 1
-					},
-					'pattern': 'smithingTable'
-				})
-				continue
-
-			if not simplest_only:
-				# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-				match = re.match(rf'{line_prefix}VanillaRecipeProvider\.colorBlockWithDye\(recipeOutput, list, list\d, "(\w+)"\)', line)
-				if match:
-					item = match.group(1).upper()
-					for color in dye_colors:
-						add_recipe(recipes, f'{color}_{item}', {
-							'count': 1,
-							'ingredients': {
-								item: 1,
-								f'{color}_DYE': 1
-							},
-							'pattern': None
-						})
-					continue
-
-				# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-				match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\(recipeOutput, \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
-				if match:
-					add_recipe(recipes, match.group(2), {
-						'count': 2,
-						'ingredients': {
-							match.group(2): 1,
-							match.group(3): 1,
-							'DIAMOND': 7,
-						},
-						'pattern': [
-							['DIAMOND', match.group(2), 'DIAMOND'],
-							['DIAMOND', match.group(3), 'DIAMOND'],
-							['DIAMOND', 'DIAMOND', 'DIAMOND'],
-						]
-					})
-					continue
-
-			# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (/P<count>\d+))?', line)
-			if match:
-				add_recipe(recipes, match.group(2), {
-					'count': int(match.groupdict().get('count', 1)),
-					'ingredients': {
-						match.group(3): 1
-					},
-					'pattern': None
-				})
-				continue
-
-			# 2x2/3x3 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\(recipeOutput(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
-			if match:
-				if match.group(1) == 'twoByTwo':
-					add_recipe(recipes, match.group(2), {
-						'count': 1,
-						'ingredients': {
-							match.group(3): 4
-						},
-						'pattern': [
-							[match.group(3), match.group(3)],
-							[match.group(3), match.group(3)]
-						]
-					})
-				else:
-					add_recipe(recipes, match.group(2), {
-						'count': 1,
-						'ingredients': {
-							match.group(3): 9
-						},
-						'pattern': None
-					})
-				continue
-
-			# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:WithCustom(?:Packing|Unpacking))?\(recipeOutput, RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+ {one_ingredient_regex}', line)
-			if match:
-				if not simplest_only:
-					add_recipe(recipes, match.group(1), {
-						'count': 9,
-						'ingredients': {
-							match.group(2): 1
-						},
-						'pattern': None
-					})
-				add_recipe(recipes, match.group(2), {
-					'count': 1,
-					'ingredients': {
-						match.group(1): 9
-					},
-					'pattern': None
-				})
-				continue
-
-			# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\((?:recipeOutput, )?(?:RecipeCategory\.[\w_]+, )?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
-			if match:
-				match_type = match.group(1)
-				if match_type == 'stainedGlassPaneFromGlassPaneAndDye' and simplest_only:
-					continue # Only use "stainedGlassPaneFromStainedGlass"
-				add_recipe(recipes, match.group(2), simple_func(match_type, match))
-				continue
+			process_recipe_line(recipes, line, dye_colors, smeltables)
 
 	return recipes
 
