@@ -123,22 +123,86 @@ def simple_func(func_type, match):
 			},
 			pattern: None
 		}
-	elif func_type == 'copySmithingTemplate':
-		pass
 	elif func_type == 'hangingSign':
-		pass
+		return {
+			'count': 6,
+			'ingredients': {
+				match.group(3): 6,
+				'CHAIN': 2,
+			},
+			pattern: [
+				['CHAIN', '', 'CHAIN'],
+				[match.group(3), match.group(3), match.group(3)],
+				[match.group(3), match.group(3), match.group(3)]
+			]
+		}
 	elif func_type == 'pressurePlate':
-		pass
+		return {
+			'count': 2,
+			'ingredients': {
+				match.group(3): 2
+			},
+			pattern: [[match.group(3), match.group(3)]]
+		}
 	elif func_type == 'stainedGlassFromGlassAndDye':
-		pass
+		return {
+			'count': 8,
+			'ingredients': {
+				match.group(3): 1,
+				'GLASS': 8,
+			},
+			pattern: [
+				['GLASS', 'GLASS', 'GLASS'],
+				['GLASS', match.group(3), 'GLASS'],
+				['GLASS', 'GLASS', 'GLASS']
+			]
+		}
 	elif func_type == 'stainedGlassPaneFromGlassPaneAndDye':
-		pass
+		return {
+			'count': 8,
+			'ingredients': {
+				match.group(3): 1,
+				'GLASS_PANE': 8,
+			},
+			pattern: [
+				['GLASS_PANE', 'GLASS_PANE', 'GLASS_PANE'],
+				['GLASS_PANE', match.group(3), 'GLASS_PANE'],
+				['GLASS_PANE', 'GLASS_PANE', 'GLASS_PANE']
+			]
+		}
 	elif func_type == 'stainedGlassPaneFromStainedGlass':
-		pass
+		return {
+			'count': 16,
+			'ingredients': {
+				match.group(3): 6
+			},
+			pattern: [
+				[match.group(3), match.group(3), match.group(3)],
+				[match.group(3), match.group(3), match.group(3)]
+			]
+		}
 	elif func_type == 'woodenBoat':
-		pass
+		return {
+			'count': 1,
+			'ingredients': {
+				match.group(3): 5
+			},
+			pattern: [
+				[match.group(3), '', match.group(3)],
+				[match.group(3), match.group(3), match.group(3)]
+			]
+		}
 	elif func_type == 'woodFromLogs':
-		pass
+		return {
+			'count': 3,
+			'ingredients': {
+				match.group(3): 4
+			},
+			pattern: [
+				[match.group(3), match.group(3)],
+				[match.group(3), match.group(3)]
+			]
+		}
 	else:
 		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
@@ -227,11 +291,68 @@ def get_recipes(source_path, simplest_only=True):
 						})
 					continue
 
+				# Smithing template copying
+				match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\(recipeOutput, \(ItemLike\){ingredient_regex}, {ingredient_regex}\);', line)
+				if match:
+					add_recipe(recipes, match.group(2), {
+						'count': 2,
+						'ingredients': {
+							match.group(2): 1,
+							match.group(3): 1,
+							'DIAMOND': 7,
+						},
+						pattern: [
+							['DIAMOND', match.group(2), 'DIAMOND'],
+							['DIAMOND', match.group(3), 'DIAMOND'],
+							['DIAMOND', 'DIAMOND', 'DIAMOND'],
+						]
+					})
+					continue
+
 			# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\(recipeOutput, (?:\(ItemLike\))?{ingredient_regex}, {ingredient_regex}\);', line)
 			if match:
 				match_type = match.group(1)
-				add_recipe(recipes, match_type, simple_func(match_type, match))
+				if match_type == 'copySmithingTemplate' and simplest_only:
+					continue # Skip duplication
+				add_recipe(recipes, match.group(2), simple_func(match_type, match))
+				continue
+
+			# One-to-one conversion
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}, "[\w_]+"(?:, (\d+))?\);', line)
+			if match:
+				add_recipe(recipes, match.group(2), {
+					'count': match.group(4) or 1,
+					'ingredients': {
+						match.group(3): 1
+					},
+					'pattern': None
+				})
+				continue
+
+			# 2x2/3x3 packer conversion
+			match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}, "[\w_]+"(?:, (\d+))?\);', line)
+			if match:
+				if match.group(1) == 'twoByTwo':
+					add_recipe(recipes, match.group(2), {
+						'count': 1,
+						'ingredients': {
+							match.group(3): 4
+						},
+						'pattern': [
+							[match.group(3), match.group(3)],
+							[match.group(3), match.group(3)]
+						]
+					})
+				else:
+					add_recipe(recipes, match.group(2), {
+						'count': 1,
+						'ingredients': {
+							match.group(3): 9
+						},
+						'pattern': None
+					})
+				continue
 
 	return recipes
 
