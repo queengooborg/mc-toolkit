@@ -47,7 +47,7 @@ ignored_items = "(" + ")|(".join([
 ]) + ")"
 
 def get_worth():
-	worth_path = script_dir / "worth.yml"
+	worth_path = output_dir / "worth.yml"
 
 	if not worth_path.exists():
 		raise Exception('worth.yml not found. The file must be placed in the same file as this script.')
