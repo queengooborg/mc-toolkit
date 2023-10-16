@@ -468,6 +468,20 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			})
 		return
 
+	# Recoloring Shulker Boxes
+	match = re.match(rf'{line_prefix}SpecialRecipeBuilder\.special\(RecipeSerializer\.SHULKER_BOX_COLORING\)', line)
+	if match:
+		for color in dye_colors:
+			add_recipe(recipes, f'{color}_SHULKER_BOX', {
+				'count': 1,
+				'ingredients': {
+					'SHULKER_BOX': 1,
+					f'{color}_DYE': 1
+				},
+				'pattern': None
+			})
+		return
+
 		# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\(recipeOutput, \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
 		if match:
@@ -523,9 +537,11 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:WithCustom(?:Packing|Unpacking))?\(recipeOutput, RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+ {one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:(?:Recipes)?WithCustom(?:Packing|Unpacking))?\(recipeOutput, RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
 	if match:
-		if not simplest_only:
+		is_nugget = match.group(1).endswith("_NUGGET")
+		# 1 block to 9 items
+		if not simplest_only or is_nugget:
 			add_recipe(recipes, match.group(1), {
 				'count': 9,
 				'ingredients': {
@@ -533,21 +549,34 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 				},
 				'pattern': None
 			})
-		add_recipe(recipes, match.group(2), {
-			'count': 1,
-			'ingredients': {
-				match.group(1): 9
-			},
-			'pattern': None
-		})
+		# 9 items to 1 block
+		if not (is_nugget and simplest_only):
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					match.group(1): 9
+				},
+				'pattern': None
+			})
 		return
 
 	# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\((?:recipeOutput, )?(?:RecipeCategory\.[\w_]+, )?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
 	if match:
 		match_type = match.group(1)
+
 		if match_type == 'stainedGlassPaneFromGlassPaneAndDye' and simplest_only:
 			return # Only use "stainedGlassPaneFromStainedGlass"
+		if match_type.startswith('planksFromLog'):
+			# Add "recipes" for stripped logs
+			add_recipe(recipes, f"STRIPPED_{match.group(5).replace('LOGS', 'LOG').replace('BLOCKS', 'BLOCK').replace('STEMS', 'STEM')}", {
+				'count': 1,
+				'ingredients': {
+					match.group(5): 1
+				},
+				'pattern': 'axe'
+			})
+
 		add_recipe(recipes, match.group(2), simple_func(match_type, match))
 		return
 
@@ -630,6 +659,22 @@ def get_recipes(source_path, simplest_only=True):
 			'pattern': 'submerge'
 		})
 
+	# Add "recipe" for dirt path and farmland
+	add_recipe(recipes, 'DIRT_PATH', {
+		'count': 1,
+		'ingredients': {
+			'DIRT': 1
+		},
+		'pattern': 'shovel'
+	})
+	add_recipe(recipes, 'FARMLAND', {
+		'count': 1,
+		'ingredients': {
+			'DIRT': 1
+		},
+		'pattern': 'hoe'
+	})
+
 	return recipes
 
 # Get items list
@@ -643,8 +688,12 @@ def get_items(source_path, mc_version):
 		# Reading source code line by line to avoid regex backtracking issues
 		for line in cmtj.readlines():
 			groupmatch = re.search(r"Registry\.register\(registry, ([\w_]+), CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)\.displayItems\(\(itemDisplayParameters, output\) -> {", line)
-			if groupmatch and groupmatch.group(1) not in ['SPAWN_EGGS', 'OP_BLOCKS']:
+			if groupmatch:
 				current_group = groupmatch
+
+			if current_group and current_group.group(1) in ['SPAWN_EGGS', 'OP_BLOCKS']:
+				# Skip creative-only items
+				continue
 
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
