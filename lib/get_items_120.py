@@ -23,10 +23,15 @@ def format_item_name(name):
 # Add a new recipe to the recipes list for the item
 def add_recipe(recipes, key, new_recipe):
 	if key in recipes:
-		print(f'Warning: multiple recipes detected for {key}!')
 		if type(recipes[key]) == list:
+			if new_recipe in recipes[key]:
+				return # Ignore duplicates
+			# print(f'Warning: multiple recipes detected for {key}!')
 			recipes[key].append(new_recipe)
 		else:
+			if new_recipe == recipes[key]:
+				return # Ignore duplicates
+			# print(f'Warning: multiple recipes detected for {key}!')
 			recipes[key] = [recipes[key], new_recipe]
 	else:
 		recipes[key] = new_recipe
@@ -61,7 +66,15 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': None
 		}
-	if variant == 'chiseled':
+	elif variant in ['carpet', 'pressurePlate']:
+		return {
+			'count': 3 if variant == 'carpet' else 1,
+			'ingredients': {
+				cost: 2,
+			},
+			'pattern': [[cost, cost]]
+		}
+	elif variant in ['chiseled', 'mosaic']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -69,7 +82,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': [[cost], [cost]]
 		}
-	if variant == 'cracked':
+	elif variant == 'cracked':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -77,7 +90,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': 'furnace'
 		}
-	if variant == 'cut':
+	elif variant == 'cut':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -88,7 +101,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	if variant == 'door':
+	elif variant == 'door':
 		return {
 			'count': 3,
 			'ingredients': {
@@ -100,7 +113,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	if variant in ['fence', 'customFence']:
+	elif variant in ['fence', 'customFence']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -112,7 +125,7 @@ def create_variant_recipe(variant, cost):
 				[cost, 'STICK', cost]
 			]
 		}
-	if variant in ['fenceGate', 'customFenceGate']:
+	elif variant in ['fenceGate', 'customFenceGate']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -124,15 +137,7 @@ def create_variant_recipe(variant, cost):
 				['STICK', cost, 'STICK']
 			]
 		}
-	if variant in ['mosaic', 'pressurePlate']:
-		return {
-			'count': 1,
-			'ingredients': {
-				cost: 2,
-			},
-			'pattern': [[cost], [cost]]
-		}
-	if variant == 'polished':
+	elif variant == 'polished':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -143,9 +148,9 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	if variant == 'sign':
+	elif variant in ['sign', 'banner']:
 		return {
-			'count': 3,
+			'count': 3 if variant == 'sign' else 1,
 			'ingredients': {
 				cost: 6,
 				'STICK': 1
@@ -156,7 +161,7 @@ def create_variant_recipe(variant, cost):
 				['', 'STICK', '']
 			]
 		}
-	if variant == 'slab':
+	elif variant == 'slab':
 		return {
 			'count': 6,
 			'ingredients': {
@@ -164,7 +169,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': [[cost, cost, cost]]
 		}
-	if variant == 'stairs':
+	elif variant == 'stairs':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -176,9 +181,9 @@ def create_variant_recipe(variant, cost):
 				[cost, cost, cost]
 			]
 		}
-	if variant in ['trapdoor', 'wall']:
+	elif variant in ['trapdoor', 'wall']:
 		return {
-			'count': 2,
+			'count': 2 if variant == 'trapdoor' else 6,
 			'ingredients': {
 				cost: 6,
 			},
@@ -187,6 +192,8 @@ def create_variant_recipe(variant, cost):
 				[cost, cost, cost]
 			]
 		}
+	else:
+		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 def simple_func(func_type, match):
@@ -194,18 +201,7 @@ def simple_func(func_type, match):
 	count = int(match.group(8) or 1)
 
 	if func_type == 'banner':
-		return {
-			'count': 1,
-			'ingredients': {
-				cost: 6,
-				'STICK': 1
-			},
-			'pattern': [
-				[cost, cost, cost],
-				[cost, cost, cost],
-				['', 'STICK', '']
-			]
-		}
+		return create_variant_recipe('banner', cost)
 	elif func_type == 'bedFromPlanksAndWool':
 		return {
 			'count': 1,
@@ -228,13 +224,7 @@ def simple_func(func_type, match):
 			'pattern': None
 		}
 	elif func_type == 'carpet':
-		return {
-			'count': 3,
-			'ingredients': {
-				cost: 2
-			},
-			'pattern': [[cost, cost]]
-		}
+		return create_variant_recipe('carpet', cost)
 	elif func_type in ['chiseled', 'chiseledBuilder']:
 		return create_variant_recipe('slab', cost)
 	elif func_type == 'chestBoat':
@@ -299,13 +289,7 @@ def simple_func(func_type, match):
 	elif func_type in ['polished', 'polishedBuilder']:
 		return create_variant_recipe('polished', cost)
 	elif func_type == 'pressurePlate':
-		return {
-			'count': 2,
-			'ingredients': {
-				cost: 2
-			},
-			'pattern': [[cost, cost]]
-		}
+		return create_variant_recipe('pressurePlate', cost)
 	elif func_type in ['slab', 'slabBuilder']:
 		return create_variant_recipe('slab', cost)
 	elif func_type == 'stairBuilder':
@@ -356,16 +340,7 @@ def simple_func(func_type, match):
 			'pattern': 'stonecutter'
 		}
 	elif func_type in ['wall', 'wallBuilder']:
-		return {
-			'count': 6,
-			'ingredients': {
-				cost: 6
-			},
-			'pattern': [
-				[cost, cost, cost],
-				[cost, cost, cost]
-			]
-		}
+		return create_variant_recipe('wall', cost)
 	elif func_type == 'woodenBoat':
 		return {
 			'count': 1,
@@ -389,7 +364,6 @@ def simple_func(func_type, match):
 			]
 		}
 	else:
-		print(match.group())
 		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
 def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables):
@@ -475,21 +449,24 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		})
 		return
 
-	if not simplest_only:
-		# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.colorBlockWithDye\(recipeOutput, list, list\d, "(\w+)"\)', line)
-		if match:
-			item = match.group(1).upper()
-			for color in dye_colors:
-				add_recipe(recipes, f'{color}_{item}', {
-					'count': 1,
-					'ingredients': {
-						item: 1,
-						f'{color}_DYE': 1
-					},
-					'pattern': None
-				})
-			return
+	# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.colorBlockWithDye\(recipeOutput, list, list\d, "(\w+)"\)', line)
+	if match:
+		item = match.group(1).upper()
+		if simplest_only and item != 'WOOL':
+			return # Beds and carpets can be crafted directly with colored wool
+		for color in dye_colors:
+			if simplest_only and item == 'WOOL' and color == 'WHITE':
+				continue # White wool can be crafted directly with string
+			add_recipe(recipes, f'{color}_{item}', {
+				'count': 1,
+				'ingredients': {
+					item: 1,
+					f'{color}_DYE': 1
+				},
+				'pattern': None
+			})
+		return
 
 		# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\(recipeOutput, \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
@@ -512,10 +489,10 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\(recipeOutput, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (/P<count>\d+))?', line)
 	if match:
-		add_recipe(recipes, match.group(2), {
+		add_recipe(recipes, match.group(1), {
 			'count': int(match.groupdict().get('count', 1)),
 			'ingredients': {
-				match.group(3): 1
+				match.group(2): 1
 			},
 			'pattern': None
 		})
@@ -628,6 +605,8 @@ def get_recipes(source_path, simplest_only=True):
 				sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
 				for s in sets:
 					variant = s.group(1)
+					if variant == 'mosaic':
+						continue # Bamboo Mosaic recipe is defined elsewhere
 					add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 
 	with open(Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")) as vrpj:
@@ -640,6 +619,16 @@ def get_recipes(source_path, simplest_only=True):
 
 			# Process recipe lines
 			process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables)
+
+	# Add "recipes" for concrete
+	for color in dye_colors:
+		add_recipe(recipes, f'{color}_CONCRETE', {
+			'count': 1,
+			'ingredients': {
+				f'{color}_CONCRETE_POWDER': 1
+			},
+			'pattern': 'submerge'
+		})
 
 	return recipes
 
