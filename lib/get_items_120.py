@@ -698,6 +698,8 @@ def get_items(source_path, mc_version):
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				item = itemmatch.group(1)
+				if item == "CUT_STANDSTONE_SLAB":
+					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 				recipe = recipes.get(item)
 
 				# Add item to list
