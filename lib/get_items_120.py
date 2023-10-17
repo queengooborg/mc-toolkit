@@ -696,10 +696,10 @@ def get_recipes(source_path, simplest_only=True):
 	return recipes
 
 # Get items list
-def get_items(source_path, mc_version, include_creative=False):
+def get_items(source_path, mc_version, include_creative=False, all_recipes=False):
 	items = {}
 	categories = {}
-	recipes = get_recipes(source_path)
+	recipes = get_recipes(source_path, simplest_only=not all_recipes)
 
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:

@@ -22,7 +22,7 @@ def generate_items(mc_version, no_cache=False, outpath=output_dir / "items.json"
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
-	items = get_items(source_path, mc_version, no_cache)
+	items = get_items(source_path, mc_version, no_cache, include_creative=True, all_recipes=True)
 
 	os.makedirs(output_dir, exist_ok=True)
 
