@@ -82,6 +82,7 @@ worth:
   pufferfish: 5.50
   tropicalfish: 1.65
   cocoabeans: 4.56
+  wheat: 3.30
 
   # Mob drops/related items
   turtleegg: 0.75
@@ -92,7 +93,8 @@ worth:
   spidereye: 3.30
   feather: 0.55
   rabbithide: 1.31
-  honeycomb: 6.00
+  honeycomb: 9.00
+  honeybottle: 4.25
   inksac: 3.30
   glowinksac: 3.55
   scute: 1.10
