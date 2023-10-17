@@ -1,0 +1,145 @@
+# -*- coding: utf-8 -*-
+
+# 
+# EssentialsX to BossShopPro - generate_worth.py
+# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
+#
+# Generate a worth.yml using some base values and recipes determined from Minecraft source
+#
+
+import argparse, os, re
+from pathlib import Path
+from pprint import pprint
+
+from DecompilerMC.main import get_latest_version
+from lib import prepare_source, get_items_list, creative_only_items
+
+import yaml
+try:
+	from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+	from yaml import Loader, Dumper
+
+script_dir = Path(os.path.dirname(__file__))
+output_dir = script_dir / "output"
+
+base_worth = yaml.load(open(script_dir / "base_worth.yml", 'r'), Loader=Loader)['worth']
+
+def add_to_worth(worth, item_id, value):
+	worth[item_id] = round(value, 2)
+
+# Calculate worth for a specific recipe
+def calculate_worth_from_recipe(items, worth, item_id):
+	recipe = items.get(item_id)
+	if not recipe:
+		if item_id not in items:
+			raise Exception(f'Item {item_id} not found!')
+		raise Exception(f'Item {item_id} has no recipe!')
+
+	if type(recipe) == list:
+		recipe = recipe[0]
+
+	value = 0.0
+	ing_count = 0
+
+	for i, ic in recipe['ingredients'].items():
+		ingredient = i.replace('_', '').lower()
+		if ingredient not in worth:
+			raise Exception(f"Ingredient {ingredient} is not defined in worth data!")
+		value += worth[ingredient] * ic
+		ing_count += ic
+
+	result = value * (1.0 - ((ing_count - 1) * 0.01)) / recipe['count']
+
+	if recipe['pattern'] in ['axe', 'shovel', 'hoe']:
+		result = result * 0.9
+	elif recipe['pattern'] in ['furnace', 'stonecutter']:
+		result = result * 1.25
+
+	return result
+
+def calculate_worth(worth, items):
+	for item, recipe in items.items():
+		item_id = item.replace('_', '').lower()
+
+		if item_id in worth:
+			continue # Skip already calculated values
+
+		# Ores
+		if item.endswith('_ORE'):
+			material = item.replace("NETHER_", "").replace("DEEPSLATE_", "").split('_')[0].lower()
+			if material in ['iron', 'copper', 'gold']:
+				material = f'raw{material}'
+			elif material == 'lapis':
+				material = 'lapislazuli'
+			add_to_worth(worth, item_id, worth[material] * 0.75)
+			continue
+
+		# Oxidized copper blocks (EXPOSED_COPPER, WEATHERED_COPPER, OXIDIZED_COPPER)
+		elif item.endswith('_COPPER'):
+			if not 'cutcopper' in worth:
+				continue # Need to wait for calculation
+			add_to_worth(worth, item_id, worth['cutcopper'] *
+				(0.5 if item == 'EXPOSED_COPPER' else 0.4 if item == 'WEATHERED_COPPER' else 0.3)
+			)
+			continue
+
+		# Damaged anvils (CHIPPED_ANVIL, DAMAGED_ANVIL)
+		elif item.endswith("_ANVIL"):
+			if not 'anvil' in worth:
+				continue # Need to wait for calculation
+			add_to_worth(worth, item_id, worth['anvil'] * (0.5 if item == 'CHIPPED_ANVIL' else 0.25))
+			continue
+
+		if not recipe:
+			continue # No recipe, cannot calculate
+
+		if type(recipe) == list:
+			recipe = recipe[0]
+
+		can_calc = True
+		for ing in recipe['ingredients'].keys():
+			if ing.replace('_', '').lower() not in worth:
+				can_calc = False
+				break
+
+		if not can_calc:
+			continue
+
+		add_to_worth(worth, item_id, calculate_worth_from_recipe(items, worth, item))
+
+def generate_worth(mc_version, outpath=output_dir / "worth.yml"):
+	if not mc_version:
+		mc_version = get_latest_version()[1]
+
+	source_path = prepare_source(mc_version)
+	items = get_items_list(source_path, mc_version)
+	worth = base_worth
+
+	calculated_items = len(worth.keys())
+
+	while True:
+		calculate_worth(worth, items)
+		if len(worth.keys()) == calculated_items:
+			break # We aren't able to calculate any more recipes
+		calculated_items = len(worth.keys())
+
+	for i in items:
+		if i.replace("_", "").lower() not in worth:
+			print(f'{i} not calculated!')
+
+	# pprint(worth)
+
+	# unhandled_recipeless_items = dict(filter(lambda i: i[1] == None and i[0].replace("_", "").lower() not in worth and i[0] not in creative_only_items, items.items()))
+	# if len(unhandled_recipeless_items):
+	# 	print('Warning: recipeless items detected!', ", ".join(unhandled_recipeless_items.keys()))
+
+	return True
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser(prog="generate_worth", description="Generate an EssentialsX worth.yml file based on Minecraft recipes and a few base prices")
+	parser.add_argument('mc_version', nargs='?')
+	args = parser.parse_args()
+
+	generate_worth(args.mc_version)

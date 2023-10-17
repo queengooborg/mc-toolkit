@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 # 
-# EssentialsX to BossShopPro
+# EssentialsX to BossShopPro - generate_shops.py
 # © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
+#
+# Generate BossShopPro shops from a worth.yml file
 #
 
 import argparse, os, re
