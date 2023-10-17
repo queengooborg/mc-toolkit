@@ -86,9 +86,9 @@ worth:
   suspiciousstew: 5.20
 
   # Mob drops/related items
-  turtleegg: 0.75
+  turtleegg: 18.98
   dragonegg: 1100.00
-  # snifferegg: 0.00
+  snifferegg: 23.24
   string: 1.65
   bone: 1.75
   spidereye: 3.30
@@ -178,15 +178,15 @@ worth:
   orangetulip: 1.93
   oxeyedaisy: 1.65
   peony: 1.10
-  # pinkpetals: 0.00
+  pinkpetals: 2.34
   pinktulip: 1.93
-  # pitcherplant: 0.00
+  pitcherplant: 1.10
   poppy: 1.10
   redtulip: 1.93
   rosebush: 1.10
   sporeblossom: 3.80
   sunflower: 3.30
-  # torchflower: 0.00
+  torchflower: 1.80
   whitetulip: 1.93
   witherrose: 225.00
   chorusflower: 27.50
@@ -210,7 +210,7 @@ worth:
   hangingroots: 0.03
   smalldripleaf: 2.30
   bigdripleaf: 3.50
-  # pitcherpod: 0.00
+  pitcherpod: 0.90
   glowberries: 3.30
   sweetberries: 3.30
   lilypad: 3.30
@@ -223,7 +223,7 @@ worth:
   melonseeds: 4.50
   pumpkinseeds: 4.50
   wheatseeds: 1.10
-  # torchflowerseeds: 0.00
+  torchflowerseeds: 0.12
 
   # Mushrooms
   shroomlight: 0.00
@@ -323,6 +323,7 @@ worth:
   skeletonskull: 5000.00
   witherskeletonskull: 10000.00
   creeperhead: 5000.00
+  piglinhead: 5000.00
   playerhead: 5000.00
   zombiehead: 5000.00
   dragonhead: 25000.00
