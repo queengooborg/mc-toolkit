@@ -83,6 +83,7 @@ worth:
   tropicalfish: 1.65
   cocoabeans: 4.56
   wheat: 3.30
+  suspiciousstew: 5.20
 
   # Mob drops/related items
   turtleegg: 0.75
@@ -116,16 +117,16 @@ worth:
   verdantfroglight: 59.44
 
   # Logs
-  acacialog: 11.00
-  birchlog: 11.00
-  darkoaklog: 11.00
-  junglelog: 11.00
-  mangrovelog: 11.00
-  oaklog: 11.00
-  sprucelog: 11.00
-  cherrylog: 11.00
-  crimsonstem: 13.20
-  warpedstem: 13.20
+  acacialog: 9.06
+  birchlog: 9.06
+  darkoaklog: 9.06
+  junglelog: 9.06
+  mangrovelog: 9.06
+  oaklog: 9.06
+  sprucelog: 9.06
+  cherrylog: 10.42
+  crimsonstem: 11.83
+  warpedstem: 11.83
   crimsonnylium: 2.25
   warpednylium: 2.25
   mangroveroots: 0.09
@@ -148,6 +149,7 @@ worth:
   cherryleaves: 2.20
   darkoakleaves: 2.20
   floweringazalealeaves: 2.60
+  azalealeavesflowers: 2.60 # Legacy name
   jungleleaves: 2.20
   mangroveleaves: 2.20
   oakleaves: 2.20
@@ -290,7 +292,7 @@ worth:
   amethystcluster: 8.58
   echoshard: 92.30
 
-  # Armor, weapons and tool
+  # Armor, weapons and tools
   chainmailboots: 330.00
   chainmailchestplate: 715.00
   chainmailhelmet: 330.00
@@ -302,12 +304,14 @@ worth:
   trident: 78.83
   totemofundying: 320.00
   experiencebottle: 25.00
+  tippedarrow: 13.02
 
   # Buckets
   waterbucket: 61.41
   lavabucket: 68.28
   milkbucket: 64.70
   powdersnowbucket: 62.54
+  powderedsnowbucket: 62.54 # Legacy name
   axolotlbucket: 67.31
   codbucket: 67.31
   pufferfishbucket: 67.31
@@ -326,6 +330,7 @@ worth:
   # Banner pattern
   globebannerpattern: 481.80
   piglinbannerpattern: 5832.25
+  snoutbannerpattern: 5832.25 # Legacy name
 
   # Pottery sherds
   # anglerpotterysherd: 0.00
@@ -368,10 +373,75 @@ worth:
   # eyearmortrimsmithingtemplate: 0.00
   # spirearmortrimsmithingtemplate: 0.00
 
+  # Potions
+  potion: 100.0
+  potion{Potion:fireresistance}: 45.56
+  potion{Potion:harming}: 30.44
+  potion{Potion:healing}: 29.69
+  potion{Potion:invisibility}: 91.4
+  potion{Potion:longfireresistance}: 51.31
+  potion{Potion:longinvisibility}: 99.43
+  potion{Potion:longnightvision}: 89.38
+  potion{Potion:longpoison}: 28.42
+  potion{Potion:longregeneration}: 115.73
+  potion{Potion:longslowness}: 59.36
+  potion{Potion:longstrength}: 88.45
+  potion{Potion:longswiftness}: 25.41
+  potion{Potion:longwaterbreathing}: 30.84
+  potion{Potion:longweakness}: 11.23
+  potion{Potion:nightvision}: 81.82
+  potion{Potion:poison}: 23.76
+  potion{Potion:regeneration}: 106.92
+  potion{Potion:slowness}: 53.33
+  potion{Potion:strength}: 80.93
+  potion{Potion:strongharming}: 41.2
+  potion{Potion:stronghealing}: 40.42
+  potion{Potion:strongleaping}: 455.01
+  potion{Potion:strongpoison}: 34.19
+  potion{Potion:strongregeneration}: 121.51
+  potion{Potion:strongstrength}: 94.22
+  potion{Potion:strongswiftness}: 31.19
+  potion{Potion:swiftness}: 20.9
+  potion{Potion:waterbreathing}: 26.07
+  potion{Potion:weakness}: 7.49
+
+  lingeringpotion: 50.20
+
+  splashpotion: 40.72
+  splashpotion{Potion:breathing}: 38.93
+  splashpotion{Potion:fireresistance}: 59.39
+  splashpotion{Potion:harming}: 43.51
+  splashpotion{Potion:healing}: 42.73
+  splashpotion{Potion:invisibility}: 107.52
+  splashpotion{Potion:longfireresistance}: 65.42
+  splashpotion{Potion:longinvisibility}: 115.96
+  splashpotion{Potion:longnightvision}: 105.39
+  splashpotion{Potion:longregeneration}: 139.13
+  splashpotion{Potion:longslowness}: 73.88
+  splashpotion{Potion:longstrength}: 38.23
+  splashpotion{Potion:longstrongstrength}: 38.93
+  splashpotion{Potion:longweakness}: 23.34
+  splashpotion{Potion:nightvision}: 97.46
+  splashpotion{Potion:poison}: 36.5
+  splashpotion{Potion:regeneration}: 123.82
+  splashpotion{Potion:slowness}: 67.54
+  splashpotion{Potion:strength}: 96.53
+  splashpotion{Potion:strongharming}: 54.81
+  splashpotion{Potion:stronghealing}: 53.99
+  splashpotion{Potion:strongleaping}: 489.32
+  splashpotion{Potion:strongpoison}: 47.45
+  splashpotion{Potion:strongregeneration}: 133.07
+  splashpotion{Potion:strongstrength}: 110.48
+  splashpotion{Potion:swiftness}: 33.5
+  splashpotion{Potion:weakness}: 19.42
+
   # Misc.
   cobweb: 0.01
+  web: 0.01 # Legacy name
   bell: 147.23
+  goathorn: 8.79
   fireworkstar: 101.75
+  fireworkrocket: 11.12
   musicdisc11: 132.00
   musicdisc13: 132.00
   musicdisc5: 132.00
@@ -389,3 +459,5 @@ worth:
   musicdiscwait: 132.00
   musicdiscward: 132.00
   discfragment5: 14.00
+  filledmap: 10.00
+  writtenbook: 10.48
