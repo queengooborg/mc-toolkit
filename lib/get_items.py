@@ -18,7 +18,7 @@ from .creative_only_items import creative_only_items
 cache_dir = Path(os.path.dirname(__file__)) / "../output/itemcache"
 
 def main(source_path, mc_version, no_cache=False, include_creative=False, all_recipes=False):
-	cache_path = cache_dir / f"{mc_version}.json"
+	cache_path = cache_dir / (mc_version + ("_creative" if include_creative else "") + ("_all-recipes" if all_recipes else "") + ".json")
 
 	if cache_path.exists() and not no_cache:
 		return json.load(open(cache_path, 'r'))
