@@ -26,6 +26,32 @@ output_dir = script_dir / "output"
 
 base_worth = yaml.load(open(script_dir / "base_worth.yml", 'r'), Loader=Loader)['worth']
 
+def remap_ingredient(item_id):
+	remappings = {
+		'PLANKS': 'oakplanks',
+		'LOGS': 'oaklog',
+		'LOGS_THAT_BURN': 'oaklog',
+		'WOODEN_SLABS': 'oakslab',
+		'COAL/CHARCOAL': 'coal',
+		'COALS': 'coal',
+		'WOOL': 'whitewool',
+		'SOUL_FIRE_BASE_BLOCKS': 'soulsoil',
+		'STONE_CRAFTING_MATERIALS': 'cobblestone',
+		'STONE_TOOL_MATERIALS': 'cobblestone',
+		'SAND/RED_SAND': 'sand',
+	}
+
+	if item_id in remappings:
+		return remappings[item_id]
+	elif item_id.endswith('_LOGS'):
+		item_id = item_id.replace('_LOGS', '_LOG')
+	elif item_id.endswith('_STEMS'):
+		item_id = item_id.replace('_STEMS', '_STEM')
+	elif item_id.endswith('_BLOCKS'):
+		item_id = item_id.replace('_BLOCKS', '_BLOCK')
+
+	return item_id.replace('_', '').lower()
+
 def add_to_worth(worth, item_id, value):
 	worth[item_id] = round(value, 2)
 
@@ -44,7 +70,7 @@ def calculate_worth_from_recipe(items, worth, item_id):
 	ing_count = 0
 
 	for i, ic in recipe['ingredients'].items():
-		ingredient = i.replace('_', '').lower()
+		ingredient = remap_ingredient(i)
 		if ingredient not in worth:
 			raise Exception(f"Ingredient {ingredient} is not defined in worth data!")
 		value += worth[ingredient] * ic
@@ -77,7 +103,7 @@ def calculate_worth(worth, items):
 			continue
 
 		# Oxidized copper blocks (EXPOSED_COPPER, WEATHERED_COPPER, OXIDIZED_COPPER)
-		elif item.endswith('_COPPER'):
+		elif item in ["EXPOSED_COPPER", "WEATHERED_COPPER", "OXIDIZED_COPPER"]:
 			if not 'cutcopper' in worth:
 				continue # Need to wait for calculation
 			add_to_worth(worth, item_id, worth['cutcopper'] *
@@ -100,7 +126,7 @@ def calculate_worth(worth, items):
 
 		can_calc = True
 		for ing in recipe['ingredients'].keys():
-			if ing.replace('_', '').lower() not in worth:
+			if remap_ingredient(ing) not in worth:
 				can_calc = False
 				break
 
@@ -109,16 +135,15 @@ def calculate_worth(worth, items):
 
 		add_to_worth(worth, item_id, calculate_worth_from_recipe(items, worth, item))
 
-def generate_worth(mc_version, outpath=output_dir / "worth.yml"):
+def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml"):
 	if not mc_version:
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
-	items = get_items_list(source_path, mc_version)
+	items = get_items_list(source_path, mc_version, no_cache)
 	worth = base_worth
 
 	calculated_items = len(worth.keys())
-
 	while True:
 		calculate_worth(worth, items)
 		if len(worth.keys()) == calculated_items:
@@ -127,19 +152,16 @@ def generate_worth(mc_version, outpath=output_dir / "worth.yml"):
 
 	for i in items:
 		if i.replace("_", "").lower() not in worth:
-			print(f'{i} not calculated!')
+			print(f'{i} was not calculated!', f'Its recipe was {items[i]}' if items[i] else 'It has no recipe!')
 
-	# pprint(worth)
 
-	# unhandled_recipeless_items = dict(filter(lambda i: i[1] == None and i[0].replace("_", "").lower() not in worth and i[0] not in creative_only_items, items.items()))
-	# if len(unhandled_recipeless_items):
-	# 	print('Warning: recipeless items detected!', ", ".join(unhandled_recipeless_items.keys()))
 
 	return True
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_worth", description="Generate an EssentialsX worth.yml file based on Minecraft recipes and a few base prices")
 	parser.add_argument('mc_version', nargs='?')
+	parser.add_argument('-n', '--no_cache', action='store_true')
 	args = parser.parse_args()
 
-	generate_worth(args.mc_version)
+	generate_worth(args.mc_version, no_cache=args.no_cache)

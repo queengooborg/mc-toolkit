@@ -405,13 +405,29 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	# Smelting recipes
 	match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
 	if match:
-		add_recipe(recipes, match.group(2), {
-			'count': 1,
-			'ingredients': {
-				match.group(1): 1
-			},
-			'pattern': 'furnace'
-		})
+		if match.group(1) == 'SMELTS_TO_GLASS':
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					'SAND': 1
+				},
+				'pattern': 'furnace'
+			})
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					'RED_SAND': 1
+				},
+				'pattern': 'furnace'
+			})
+		else:
+			add_recipe(recipes, match.group(2), {
+				'count': 1,
+				'ingredients': {
+					match.group(1): 1
+				},
+				'pattern': 'furnace'
+			})
 		return
 
 	# Ore smelting recipes
