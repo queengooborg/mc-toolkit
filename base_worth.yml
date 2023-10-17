@@ -1,0 +1,389 @@
+#
+# EssentialsX to BossShopPro - base_worth.yml
+# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
+#
+# The preset prices for the base items that do not have crafting recipes or should otherwise have an overridden price
+#
+
+worth:
+  # Base blocks
+  dirt: 0.53
+  coarsedirt: 0.58
+  rooteddirt: 0.58
+  grassblock: 0.63
+  cobblestone: 1.10
+  sand: 0.55
+  redsand: 1.63
+  gravel: 0.55
+  obsidian: 130.80
+  cryingobsidian: 392.40
+  deepslate: 2.77
+  cobbleddeepslate: 1.32
+  podzol: 2.63
+  mycelium: 11.00
+  ice: 7.70
+  calcite: 1.10
+  tuff: 0.26
+  mud: 0.58
+  mossblock: 2.20
+  pointeddripstone: 1.01
+  sponge: 12.71
+  wetsponge: 11.00
+
+  # Base items
+  snowball: 1.10
+  flint: 0.55
+  clayball: 3.30
+  nametag: 55.00
+  bundle: 10.04
+
+  # Nether materials
+  netherrack: 1.75
+  soulsand: 11.00
+  soulsoil: 11.00
+  glowstone: 36.96
+  glowstonedust: 8.80
+  basalt: 0.26
+  blackstone: 1.54
+  gildedblackstone: 58.00
+  netherwart: 16.50
+  netherwartblock: 118.80
+  warpedwartblock: 118.80
+
+  # End materials
+  endstone: 17.50
+  sculk: 30.69
+  sculkcatalyst: 108.89
+  sculksensor: 88.20
+  sculkshrieker: 97.28
+  sculkvein: 42.68
+  elytra: 6000.00
+
+  # Food
+  apple: 3.30
+  enchantedgoldenapple: 4679.34
+  beetroot: 0.66
+  carrot: 0.83
+  chorusfruit: 5.50
+  melonslice: 4.65
+  potato: 0.55
+  poisonouspotato: 0.28
+  beef: 5.50
+  chicken: 2.75
+  cod: 3.30
+  mutton: 1.10
+  porkchop: 4.40
+  rabbit: 1.65
+  egg: 0.55
+  kelp: 3.13
+  seapickle: 3.74
+  salmon: 3.58
+  pufferfish: 5.50
+  tropicalfish: 1.65
+  cocoabeans: 4.56
+
+  # Mob drops/related items
+  turtleegg: 0.75
+  dragonegg: 1100.00
+  # snifferegg: 0.00
+  string: 1.65
+  bone: 1.75
+  spidereye: 3.30
+  feather: 0.55
+  rabbithide: 1.31
+  honeycomb: 6.00
+  inksac: 3.30
+  glowinksac: 3.55
+  scute: 1.10
+  slimeball: 11.00
+  rottenflesh: 0.39
+  blazerod: 110.00
+  shulkershell: 34.20
+  gunpowder: 11.00
+  dragonbreath: 110.00
+  rabbitfoot: 22.00
+  ghasttear: 82.5
+  phantommembrane: 1.40
+  nautilusshell: 6.58
+  enderpearl: 55.00
+  beehive: 39.87
+  beenest: 39.87
+  ochrefroglight: 59.44
+  pearlescentfroglight: 59.44
+  verdantfroglight: 59.44
+
+  # Logs
+  acacialog: 11.00
+  birchlog: 11.00
+  darkoaklog: 11.00
+  junglelog: 11.00
+  mangrovelog: 11.00
+  oaklog: 11.00
+  sprucelog: 11.00
+  cherrylog: 11.00
+  crimsonstem: 13.20
+  warpedstem: 13.20
+  crimsonnylium: 2.25
+  warpednylium: 2.25
+  mangroveroots: 0.09
+  muddymangroveroots: 0.05
+  strippedacacialog: 10.35
+  strippedbirchlog: 10.35
+  strippeddarkoaklog: 10.35
+  strippedjunglelog: 10.35
+  strippedmangrovelog: 10.35
+  strippedoaklog: 10.35
+  strippedsprucelog: 10.35
+  strippedcherrylog: 10.35
+  strippedcrimsonstem: 12.42
+  strippedwarpedstem: 12.42
+
+  # Leaves
+  acacialeaves: 2.20
+  azalealeaves: 2.20
+  birchleaves: 2.20
+  cherryleaves: 2.20
+  darkoakleaves: 2.20
+  floweringazalealeaves: 2.60
+  jungleleaves: 2.20
+  mangroveleaves: 2.20
+  oakleaves: 2.20
+  spruceleaves: 2.20
+
+  # Saplings
+  acaciasapling: 1.80
+  birchsapling: 1.80
+  darkoaksapling: 1.80
+  junglesapling: 1.80
+  oaksapling: 1.80
+  sprucesapling: 1.80
+  cherrysapling: 1.80
+  mangrovepropagule: 1.80
+  azalea: 1.80
+  floweringazalea: 1.80
+
+  # Flowers
+  allium: 5.50
+  azurebluet: 1.93
+  blueorchid: 1.10
+  cornflower: 2.75
+  dandelion: 1.32
+  lilac: 2.75
+  lilyofthevalley: 2.75
+  orangetulip: 1.93
+  oxeyedaisy: 1.65
+  peony: 1.10
+  # pinkpetals: 0.00
+  pinktulip: 1.93
+  # pitcherplant: 0.00
+  poppy: 1.10
+  redtulip: 1.93
+  rosebush: 1.10
+  sporeblossom: 3.80
+  sunflower: 3.30
+  # torchflower: 0.00
+  whitetulip: 1.93
+  witherrose: 225.00
+  chorusflower: 27.50
+
+  # Plants
+  bamboo: 0.81
+  grass: 0.01
+  tallgrass: 0.01
+  fern: 0.01
+  largefern: 0.01
+  deadbush: 0.01
+  sugarcane: 0.55
+  cactus: 5.50
+  crimsonroots: 0.03
+  warpedroots: 0.03
+  nethersprouts: 0.02
+  vine: 5.50
+  weepingvines: 6.45
+  twistingvines: 6.45
+  glowlichen: 6.70
+  hangingroots: 0.03
+  smalldripleaf: 2.30
+  bigdripleaf: 3.50
+  # pitcherpod: 0.00
+  glowberries: 3.30
+  sweetberries: 3.30
+  lilypad: 3.30
+  seagrass: 0.02
+  pumpkin: 30.0
+  carvedpumpkin: 12.69
+
+  # Seeds
+  beetrootseeds: 0.22
+  melonseeds: 4.50
+  pumpkinseeds: 4.50
+  wheatseeds: 1.10
+  # torchflowerseeds: 0.00
+
+  # Mushrooms
+  shroomlight: 0.00
+  brownmushroom: 0.00
+  redmushroom: 0.00
+  crimsonfungus: 0.00
+  warpedfungus: 0.00
+  mushroomstem: 0.00
+  brownmushroomblock: 0.00
+  redmushroomblock: 0.00
+
+  # Coral
+  tubecoralblock: 3.43
+  braincoralblock: 3.43
+  bubblecoralblock: 3.43
+  firecoralblock: 3.43
+  horncoralblock: 3.43
+  tubecoral: 2.87
+  braincoral: 2.87
+  bubblecoral: 2.87
+  firecoral: 2.87
+  horncoral: 2.87
+  tubecoralfan: 3.17
+  braincoralfan: 3.17
+  bubblecoralfan: 3.17
+  firecoralfan: 3.17
+  horncoralfan: 3.17
+  deadtubecoralblock: 0.03
+  deadbraincoralblock: 0.03
+  deadbubblecoralblock: 0.03
+  deadfirecoralblock: 0.03
+  deadhorncoralblock: 0.03
+  deadtubecoral: 0.01
+  deadbraincoral: 0.01
+  deadbubblecoral: 0.01
+  deadfirecoral: 0.01
+  deadhorncoral: 0.01
+  deadtubecoralfan: 0.03
+  deadbraincoralfan: 0.03
+  deadbubblecoralfan: 0.03
+  deadfirecoralfan: 0.03
+  deadhorncoralfan: 0.03
+
+  # Valuables
+  coal: 8.80
+  rawiron: 13.20
+  ironingot: 18.48
+  rawcopper: 10.26
+  copperingot: 12.83
+  rawgold: 44.00
+  goldingot: 58.91
+  redstone: 3.30
+  emerald: 55.00
+  lapislazuli: 13.25
+  diamond: 550.00
+  ancientdebris: 968.00
+  quartz: 19.25
+  prismarineshard: 5.50
+  prismarinecrystals: 8.25
+  netherstar: 30000.00
+  heartofthesea: 44.39
+  amethystshard: 9.00
+  smallamethystbud: 2.25
+  mediumamethystbud: 4.69
+  largeamethystbud: 7.17
+  amethystcluster: 8.58
+  echoshard: 92.30
+
+  # Armor, weapons and tool
+  chainmailboots: 330.00
+  chainmailchestplate: 715.00
+  chainmailhelmet: 330.00
+  chainmailleggings: 550.00
+  ironhorsearmor: 132.00
+  goldenhorsearmor: 385.00
+  diamondhorsearmor: 3300.00
+  saddle: 110.00
+  trident: 78.83
+  totemofundying: 320.00
+  experiencebottle: 25.00
+
+  # Buckets
+  waterbucket: 61.41
+  lavabucket: 68.28
+  milkbucket: 64.70
+  powdersnowbucket: 62.54
+  axolotlbucket: 67.31
+  codbucket: 67.31
+  pufferfishbucket: 67.31
+  salmonbucket: 67.31
+  tadpolebucket: 55.21
+  tropicalfishbucket: 67.31
+
+  # Mob heads
+  skeletonskull: 5000.00
+  witherskeletonskull: 10000.00
+  creeperhead: 5000.00
+  playerhead: 5000.00
+  zombiehead: 5000.00
+  dragonhead: 25000.00
+
+  # Banner pattern
+  globebannerpattern: 481.80
+  piglinbannerpattern: 5832.25
+
+  # Pottery sherds
+  # anglerpotterysherd: 0.00
+  # archerpotterysherd: 0.00
+  # armsuppotterysherd: 0.00
+  # bladepotterysherd: 0.00
+  # brewerpotterysherd: 0.00
+  # burnpotterysherd: 0.00
+  # dangerpotterysherd: 0.00
+  # explorerpotterysherd: 0.00
+  # friendpotterysherd: 0.00
+  # heartpotterysherd: 0.00
+  # heartbreakpotterysherd: 0.00
+  # howlpotterysherd: 0.00
+  # minerpotterysherd: 0.00
+  # mournerpotterysherd: 0.00
+  # plentypotterysherd: 0.00
+  # prizepotterysherd: 0.00
+  # sheafpotterysherd: 0.00
+  # shelterpotterysherd: 0.00
+  # skullpotterysherd: 0.00
+  # snortpotterysherd: 0.00
+
+  # Smithing templates
+  # netheriteupgradesmithingtemplate: 0.00
+  # sentryarmortrimsmithingtemplate: 0.00
+  # vexarmortrimsmithingtemplate: 0.00
+  # wildarmortrimsmithingtemplate: 0.00
+  # coastarmortrimsmithingtemplate: 0.00
+  # dunearmortrimsmithingtemplate: 0.00
+  # wayfinderarmortrimsmithingtemplate: 0.00
+  # raiserarmortrimsmithingtemplate: 0.00
+  # shaperarmortrimsmithingtemplate: 0.00
+  # hostarmortrimsmithingtemplate: 0.00
+  # wardarmortrimsmithingtemplate: 0.00
+  # silencearmortrimsmithingtemplate: 0.00
+  # tidearmortrimsmithingtemplate: 0.00
+  # snoutarmortrimsmithingtemplate: 0.00
+  # ribarmortrimsmithingtemplate: 0.00
+  # eyearmortrimsmithingtemplate: 0.00
+  # spirearmortrimsmithingtemplate: 0.00
+
+  # Misc.
+  cobweb: 0.01
+  bell: 147.23
+  fireworkstar: 101.75
+  musicdisc11: 132.00
+  musicdisc13: 132.00
+  musicdisc5: 132.00
+  musicdiscblocks: 132.00
+  musicdisccat: 132.00
+  musicdiscchirp: 132.00
+  musicdiscfar: 132.00
+  musicdiscmall: 132.00
+  musicdiscmellohi: 132.00
+  musicdiscotherside: 132.00
+  musicdiscpigstep: 132.00
+  musicdiscrelic: 132.00
+  musicdiscstal: 132.00
+  musicdiscstrad: 132.00
+  musicdiscwait: 132.00
+  musicdiscward: 132.00
+  discfragment5: 14.00
