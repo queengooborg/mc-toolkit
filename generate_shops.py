@@ -13,6 +13,7 @@ from pathlib import Path
 
 from DecompilerMC.main import get_latest_version
 from lib import get_items, prepare_source
+from generate_worth import generate_worth
 
 import yaml
 try:
@@ -33,11 +34,11 @@ ignored_items = [
 	'cutstandstoneslab' # Typo in 1.17+ source code
 ]
 
-def get_worth():
+def get_worth(mc_version):
 	worth_path = output_dir / "worth.yml"
 
 	if not worth_path.exists():
-		raise Exception('worth.yml not found. The file must be placed in the same file as this script.')
+		generate_worth(mc_version)
 
 	worth_data = yaml.load(open(worth_path, 'r'), Loader=Loader)
 
@@ -52,7 +53,7 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)
-	worth = get_worth()
+	worth = get_worth(mc_version)
 
 	os.makedirs(outpath, exist_ok=True)
 
