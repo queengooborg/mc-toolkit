@@ -726,7 +726,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 		# Reading source code line by line to avoid regex backtracking issues
 		for line in cmtj.readlines():
-			groupmatch = re.search(r"Registry\.register\(registry, ([\w_]+), CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)(?:\.alignedRight\(\)?)\.displayItems\(\(itemDisplayParameters, output\) -> {", line)
+			groupmatch = re.search(r"Registry\.register\(registry, ([\w_]+), CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)(?:\.alignedRight\(\))?\.displayItems\(\(itemDisplayParameters, output\) -> {", line)
 			if groupmatch:
 				current_group = groupmatch
 
