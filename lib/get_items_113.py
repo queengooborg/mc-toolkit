@@ -11,8 +11,10 @@
 import os, re, json
 from pathlib import Path
 
+from .creative_only_items import creative_only_items
+
 # Get items list
-def get_items(source_path, mc_version):
+def get_items(source_path, mc_version, include_creative=False):
 	items = {
 		'BUILDING_BLOCKS': {
 			'block': 'BRICKS',
@@ -77,14 +79,20 @@ def get_items(source_path, mc_version):
 		for line in ij.readlines():
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
 			if match:
+				if not include_creative and match.group(1) in creative_only_items:
+					continue
+
 				group = match.group(2).replace('TAB_', '')
 				if group in items:
-					items[group]['items'][match.group(1).lower()] = {}
+					items[group]['items'][match.group(1)] = {}
 				elif group == 'MATERIALS':
-					items['MISC']['items'][match.group(1).lower()] = {}
+					items['MISC']['items'][match.group(1)] = {}
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
-					items['MISC']['items'][match2.group(1).lower()] = {}
+					if match2.group(1) in creative_only_items:
+						continue
+
+					items['MISC']['items'][match2.group(1)] = {}
 
 	return items

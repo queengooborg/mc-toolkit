@@ -11,6 +11,8 @@
 import os, re, json
 from pathlib import Path
 
+from .creative_only_items import creative_only_items
+
 line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
 one_ingredient_regex = r"(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
 ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
@@ -678,7 +680,7 @@ def get_recipes(source_path, simplest_only=True):
 	return recipes
 
 # Get items list
-def get_items(source_path, mc_version):
+def get_items(source_path, mc_version, include_creative=False):
 	items = {}
 	recipes = get_recipes(source_path)
 
@@ -701,6 +703,9 @@ def get_items(source_path, mc_version):
 				if item == "CUT_STANDSTONE_SLAB":
 					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 				recipe = recipes.get(item)
+
+				if not include_creative and item in creative_only_items:
+					continue
 
 				# Add item to list
 				if current_group.group(1) in items:

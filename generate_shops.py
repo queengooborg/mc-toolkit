@@ -22,29 +22,14 @@ script_dir = Path(os.path.dirname(__file__))
 output_dir = script_dir / "output"
 
 # Items that will not yield a missing item warning
-ignored_items = "(" + ")|(".join([
-	r'.*commandblock.*',
-	r'infested.*',
+ignored_items = [
 	'air',
 	'light',
-	'bedrock',
-	'barrier',
-	'debugstick',
-	'structurevoid',
-	'structureblock',
-	'jigsaw',
-	'endportalframe',
-	'spawner',
-	r'.*spawnegg',
-	'knowledgebook',
-	'petrifiedoakslab',
 	'grasspath',
 	'dirtpath',
-	'reinforceddeepslate',
-	'frogspawn',
 	'netheritebricks', # Non-existent block
 	'cutstandstoneslab' # Typo in 1.17+ source code
-]) + ")"
+]
 
 def get_worth():
 	worth_path = output_dir / "worth.yml"
@@ -116,7 +101,7 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 						{'amount': 64}
 					]
 				}
-			elif not re.match(ignored_items, ikey):
+			elif not ikey in ignored_items:
 				print(f"Warning: item {ikey} is not in worth.yml!")
 
 		with open(outpath / 'Shop{0}.yml'.format(group_title.replace(' ', '')), 'w') as shopfile:
