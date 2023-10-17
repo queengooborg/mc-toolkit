@@ -158,7 +158,7 @@ def calculate_worth(worth, items):
 
 		# Handle legacy names
 
-		if item.startswith('END_STONE_BRICK') and item is not "END_STONE_BRICKS":
+		if item.startswith('END_STONE_BRICK') and item != "END_STONE_BRICKS":
 			worth[item_id.replace('brick', '')] = worth[item_id]
 		elif item == "MELON":
 			worth["melonblock"] = worth['melon']
