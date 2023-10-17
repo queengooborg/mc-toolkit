@@ -226,14 +226,14 @@ worth:
   torchflowerseeds: 0.12
 
   # Mushrooms
-  shroomlight: 0.00
-  brownmushroom: 0.00
-  redmushroom: 0.00
-  crimsonfungus: 0.00
-  warpedfungus: 0.00
-  mushroomstem: 0.00
-  brownmushroomblock: 0.00
-  redmushroomblock: 0.00
+  shroomlight: 44.35
+  brownmushroom: 1.10
+  redmushroom: 1.10
+  crimsonfungus: 1.32
+  warpedfungus: 1.32
+  mushroomstem: 2.20
+  brownmushroomblock: 2.20
+  redmushroomblock: 2.20
 
   # Coral
   tubecoralblock: 3.43
@@ -281,6 +281,7 @@ worth:
   diamond: 550.00
   ancientdebris: 968.00
   quartz: 19.25
+  netheriteingot: 4807.64
   prismarineshard: 5.50
   prismarinecrystals: 8.25
   netherstar: 30000.00
@@ -334,45 +335,45 @@ worth:
   snoutbannerpattern: 5832.25 # Legacy name
 
   # Pottery sherds
-  # anglerpotterysherd: 0.00
-  # archerpotterysherd: 0.00
-  # armsuppotterysherd: 0.00
-  # bladepotterysherd: 0.00
-  # brewerpotterysherd: 0.00
-  # burnpotterysherd: 0.00
-  # dangerpotterysherd: 0.00
-  # explorerpotterysherd: 0.00
-  # friendpotterysherd: 0.00
-  # heartpotterysherd: 0.00
-  # heartbreakpotterysherd: 0.00
-  # howlpotterysherd: 0.00
-  # minerpotterysherd: 0.00
-  # mournerpotterysherd: 0.00
-  # plentypotterysherd: 0.00
-  # prizepotterysherd: 0.00
-  # sheafpotterysherd: 0.00
-  # shelterpotterysherd: 0.00
-  # skullpotterysherd: 0.00
-  # snortpotterysherd: 0.00
+  anglerpotterysherd: 497.87
+  archerpotterysherd: 497.87
+  armsuppotterysherd: 497.87
+  bladepotterysherd: 497.87
+  brewerpotterysherd: 497.87
+  burnpotterysherd: 497.87
+  dangerpotterysherd: 497.87
+  explorerpotterysherd: 497.87
+  friendpotterysherd: 497.87
+  heartpotterysherd: 497.87
+  heartbreakpotterysherd: 497.87
+  howlpotterysherd: 497.87
+  minerpotterysherd: 497.87
+  mournerpotterysherd: 497.87
+  plentypotterysherd: 497.87
+  prizepotterysherd: 497.87
+  sheafpotterysherd: 497.87
+  shelterpotterysherd: 497.87
+  skullpotterysherd: 497.87
+  snortpotterysherd: 497.87
 
   # Smithing templates
-  # netheriteupgradesmithingtemplate: 0.00
-  # sentryarmortrimsmithingtemplate: 0.00
-  # vexarmortrimsmithingtemplate: 0.00
-  # wildarmortrimsmithingtemplate: 0.00
-  # coastarmortrimsmithingtemplate: 0.00
-  # dunearmortrimsmithingtemplate: 0.00
-  # wayfinderarmortrimsmithingtemplate: 0.00
-  # raiserarmortrimsmithingtemplate: 0.00
-  # shaperarmortrimsmithingtemplate: 0.00
-  # hostarmortrimsmithingtemplate: 0.00
-  # wardarmortrimsmithingtemplate: 0.00
-  # silencearmortrimsmithingtemplate: 0.00
-  # tidearmortrimsmithingtemplate: 0.00
-  # snoutarmortrimsmithingtemplate: 0.00
-  # ribarmortrimsmithingtemplate: 0.00
-  # eyearmortrimsmithingtemplate: 0.00
-  # spirearmortrimsmithingtemplate: 0.00
+  netheriteupgradesmithingtemplate: 8850.70
+  sentryarmortrimsmithingtemplate: 8850.70
+  vexarmortrimsmithingtemplate: 8850.70
+  wildarmortrimsmithingtemplate: 8850.70
+  coastarmortrimsmithingtemplate: 8850.70
+  dunearmortrimsmithingtemplate: 8850.70
+  wayfinderarmortrimsmithingtemplate: 8850.70
+  raiserarmortrimsmithingtemplate: 8850.70
+  shaperarmortrimsmithingtemplate: 8850.70
+  hostarmortrimsmithingtemplate: 8850.70
+  wardarmortrimsmithingtemplate: 8850.70
+  silencearmortrimsmithingtemplate: 8850.70
+  tidearmortrimsmithingtemplate: 8850.70
+  snoutarmortrimsmithingtemplate: 8850.70
+  ribarmortrimsmithingtemplate: 8850.70
+  eyearmortrimsmithingtemplate: 8850.70
+  spirearmortrimsmithingtemplate: 8850.70
 
   # Potions
   potion: 100.0
