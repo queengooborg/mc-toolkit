@@ -183,6 +183,8 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml")
 		if i.replace("_", "").lower() not in worth:
 			print(f'{i} was not calculated!', f'Its recipe was {items[i]}' if items[i] else 'It has no recipe!')
 
+	os.makedirs(output_dir, exist_ok=True)
+
 	with open(outpath, 'w') as worthfile:
 		worthfile.write(worth_header + "\n\n")
 		worthfile.write(yaml.dump({'worth': worth}, Dumper=Dumper))
