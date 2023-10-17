@@ -17,6 +17,7 @@
 # Known Issues/To-Do:
 #   Firework Rockets have a flat price and need different pricing for each type (help wanted)
 #   Selling potions will always use the base price and does not use pricing specific to each type (help wanted)
+#   Smithing templates and pottery sherds have a uniform price for each respective item type and need to be separated (help wanted)
 #
 
 #
