@@ -695,10 +695,34 @@ def get_recipes(source_path, simplest_only=True):
 
 	return recipes
 
+# Add item to items list
+def add_item(items, current_group, item, recipe):
+	if current_group.group(1) in items:
+		items[current_group.group(1)]['items'][item] = recipe
+	else:
+		items[current_group.group(1)] = {
+			'block': current_group.group(2),
+			'items': {
+				item: recipe
+			}
+		}
+
 # Get items list
 def get_items(source_path, mc_version, include_creative=False):
 	items = {}
 	recipes = get_recipes(source_path)
+
+	items_list = []
+	itemsjava = Path(f"{source_path}/world/item/Items.java")
+	with open(str(itemsjava), 'r') as ij:
+		for line in ij.readlines():
+			match = re.search(rf"public static final Item (\w+) = ", line)
+			if match:
+				item = match.group(1)
+				if not include_creative and item in creative_only_items:
+					continue
+
+				items_list.append(item)
 
 	with open(Path(f"{source_path}/world/item/CreativeModeTabs.java")) as cmtj:
 		current_group = None
@@ -713,9 +737,27 @@ def get_items(source_path, mc_version, include_creative=False):
 				# Skip creative-only items
 				continue
 
+			item = None
 			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				item = itemmatch.group(1)
+			elif 'CreativeModeTabs.generateFireworksAllDurations(' in line:
+				item = 'FIREWORK_ROCKET'
+			elif 'CreativeModeTabs.generateSuspiciousStews(' in line:
+				item = "SUSPICIOUS_STEW"
+			elif 'CreativeModeTabs.generateInstrumentTypes(output, registryLookup, Items.GOAT_HORN' in line:
+				item = "GOAT_HORN"
+			elif 'CreativeModeTabs.generateEnchantmentBookTypesOnlyMaxLevel(' in line:
+				item = 'ENCHANTED_BOOK'
+			else:
+				potionmatch = re.search(r"CreativeModeTabs\.generatePotionEffectTypes\(output, registryLookup, Items\.([\w_]+)", line)
+				if potionmatch:
+					item = potionmatch.group(1)
+
+			if item:
+				if item in items_list:
+					items_list.remove(item)
+
 				if item == "CUT_STANDSTONE_SLAB":
 					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 				recipe = recipes.get(item)
@@ -723,15 +765,18 @@ def get_items(source_path, mc_version, include_creative=False):
 				if not include_creative and item in creative_only_items:
 					continue
 
-				# Add item to list
-				if current_group.group(1) in items:
-					items[current_group.group(1)]['items'][item] = recipe
-				else:
-					items[current_group.group(1)] = {
-						'block': current_group.group(2),
-						'items': {
-							item: recipe
-						}
-					}
+				add_item(items, current_group, item, recipe)
+
+				if item == "WRITABLE_BOOK":
+					add_item(items, current_group, "WRITTEN_BOOK", None)
+					if "WRITTEN_BOOK" in items_list:
+						items_list.remove("WRITTEN_BOOK")
+				elif item == "MAP":
+					add_item(items, current_group, "FILLED_MAP", None)
+					if "FILLED_MAP" in items_list:
+						items_list.remove("FILLED_MAP")
+
+	if items_list:
+		raise Exception(f"Unhandled items found in source code! {items_list}")
 
 	return items
