@@ -188,8 +188,6 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml")
 		worthfile.write(worth_header + "\n\n")
 		worthfile.write(yaml.dump({'worth': worth}, Dumper=Dumper))
 
-	return True
-
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_worth", description="Generate an EssentialsX worth.yml file based on Minecraft recipes and a few base prices")
 	parser.add_argument('mc_version', nargs='?')
