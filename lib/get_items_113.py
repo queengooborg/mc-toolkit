@@ -15,46 +15,48 @@ from .creative_only_items import creative_only_items
 
 # Get items list
 def get_items(source_path, mc_version, include_creative=False):
-	items = {
+	items = {}
+
+	categories = {
 		'BUILDING_BLOCKS': {
 			'block': 'BRICKS',
-			'items': {}
+			'items': []
 		},
 		'DECORATIONS': {
 			'block': 'PEONY',
-			'items': {}
+			'items': []
 		},
 		'REDSTONE': {
 			'block': 'REDSTONE',
-			'items': {}
+			'items': []
 		},
 		'TRANSPORTATION': {
 			'block': 'POWERED_RAIL',
-			'items': {}
+			'items': []
 		},
 		'MISC': {
 			'block': 'LAVA_BUCKET',
-			'items': {}
+			'items': []
 		},
 		'FOOD': {
 			'block': 'APPLE',
-			'items': {}
+			'items': []
 		},
 		'TOOLS': {
 			'block': 'IRON_AXE',
-			'items': {}
+			'items': []
 		},
 		'COMBAT': {
 			'block': 'GOLDEN_SWORD',
-			'items': {}
+			'items': []
 		},
 		'BREWING': {
 			'block': 'POTION',
-			'items': {}
+			'items': []
 		},
 		'MISC': {
 			'block': 'DRAGON_EGG',
-			'items': {}
+			'items': []
 		},
 	}
 
@@ -79,20 +81,24 @@ def get_items(source_path, mc_version, include_creative=False):
 		for line in ij.readlines():
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
 			if match:
-				if not include_creative and match.group(1) in creative_only_items:
+				item = match.group(1)
+				if not include_creative and item in creative_only_items:
 					continue
 
 				group = match.group(2).replace('TAB_', '')
-				if group in items:
-					items[group]['items'][match.group(1)] = {}
-				elif group == 'MATERIALS':
-					items['MISC']['items'][match.group(1)] = {}
+				if group not in items:
+					group = 'MISC'
+
+				items[item] = {}
+				categories[group]['items'].append(item)
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
-					if match2.group(1) in creative_only_items:
+					item = match2.group(1)
+					if item in creative_only_items:
 						continue
 
-					items['MISC']['items'][match2.group(1)] = {}
+					items[item] = {}
+					items['MISC']['items'].append(item)
 
-	return items
+	return dict(items=items, categories=categories)

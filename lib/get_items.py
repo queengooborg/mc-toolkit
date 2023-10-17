@@ -35,12 +35,3 @@ def main(source_path, mc_version, no_cache=False, include_creative=False):
 		json.dump(data, cachefile)
 
 	return data
-
-def get_items_list(source_path, mc_version, no_cache=False, include_creative=False):
-	data = main(source_path, mc_version, no_cache=no_cache, include_creative=include_creative)
-	items = {}
-
-	for cat, catdata in data.items():
-		items.update(catdata['items'])
-
-	return items

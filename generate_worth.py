@@ -8,12 +8,11 @@
 # Generate a worth.yml using some base values and recipes determined from Minecraft source
 #
 
-import argparse, os, re
+import argparse, os
 from pathlib import Path
-from pprint import pprint
 
 from DecompilerMC.main import get_latest_version
-from lib import prepare_source, get_items_list, creative_only_items
+from lib import prepare_source, get_items, creative_only_items
 
 import yaml
 try:
@@ -170,7 +169,7 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml")
 		mc_version = get_latest_version()[1]
 
 	source_path = prepare_source(mc_version)
-	items = get_items_list(source_path, mc_version, no_cache)
+	items = get_items(source_path, mc_version, no_cache)['items']
 	worth = base_worth
 
 	calculated_items = len(worth.keys())

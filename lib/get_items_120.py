@@ -695,24 +695,12 @@ def get_recipes(source_path, simplest_only=True):
 
 	return recipes
 
-# Add item to items list
-def add_item(items, current_group, item, recipe):
-	if current_group.group(1) in items:
-		items[current_group.group(1)]['items'][item] = recipe
-	else:
-		items[current_group.group(1)] = {
-			'block': current_group.group(2),
-			'items': {
-				item: recipe
-			}
-		}
-
 # Get items list
 def get_items(source_path, mc_version, include_creative=False):
 	items = {}
+	categories = {}
 	recipes = get_recipes(source_path)
 
-	items_list = []
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
@@ -722,7 +710,16 @@ def get_items(source_path, mc_version, include_creative=False):
 				if not include_creative and item in creative_only_items:
 					continue
 
-				items_list.append(item)
+				if item == "CUT_STANDSTONE_SLAB":
+					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
+				recipe = recipes.get(item)
+
+				items[item] = recipe
+
+				if item == "WRITABLE_BOOK":
+					items["WRITTEN_BOOK"] = None
+				elif item == "MAP":
+					items["FILLED_MAP"] = None
 
 	with open(Path(f"{source_path}/world/item/CreativeModeTabs.java")) as cmtj:
 		current_group = None
@@ -755,9 +752,6 @@ def get_items(source_path, mc_version, include_creative=False):
 					item = potionmatch.group(1)
 
 			if item:
-				if item in items_list:
-					items_list.remove(item)
-
 				if item == "CUT_STANDSTONE_SLAB":
 					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 				recipe = recipes.get(item)
@@ -765,18 +759,13 @@ def get_items(source_path, mc_version, include_creative=False):
 				if not include_creative and item in creative_only_items:
 					continue
 
-				add_item(items, current_group, item, recipe)
+				group = current_group.group(1)
+				if group not in categories:
+					categories[group] = {
+						'block': current_group.group(2),
+						'items': []
+					}
 
-				if item == "WRITABLE_BOOK":
-					add_item(items, current_group, "WRITTEN_BOOK", None)
-					if "WRITTEN_BOOK" in items_list:
-						items_list.remove("WRITTEN_BOOK")
-				elif item == "MAP":
-					add_item(items, current_group, "FILLED_MAP", None)
-					if "FILLED_MAP" in items_list:
-						items_list.remove("FILLED_MAP")
+				categories[group]['items'].append(item)
 
-	if items_list:
-		raise Exception(f"Unhandled items found in source code! {items_list}")
-
-	return items
+	return dict(items=items, categories=categories)

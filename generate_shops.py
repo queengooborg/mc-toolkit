@@ -67,7 +67,7 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 		'shop': {}
 	}
 
-	for group_name, group_data in items.items():
+	for group_name, group_data in items['categories'].items():
 		group_title = group_name.replace('_', ' ').title()
 		group_id = group_title.replace(' ', '')
 
@@ -93,7 +93,7 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 			'itemshop': {}
 		}
 
-		for item in group_data['items'].keys():
+		for item in group_data['items']:
 			ikey = item.lower().replace('_', '')
 			if ikey in worth:
 				shop_data['itemshop'][ikey] = {
