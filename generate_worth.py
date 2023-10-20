@@ -160,8 +160,12 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml")
 		calculated_items = len(worth.keys())
 
 	for i in items:
-		if i.replace("_", "").lower() not in worth:
+		ikey = i.replace("_", "").lower()
+		if ikey not in worth:
 			print(f'{i} was not calculated!', f'Its recipe was {items[i]}' if items[i] else 'It has no recipe!')
+		elif worth[ikey] == 0.0:
+			print(f'{i} resulted in a value of 0.00, calculation error!')
+
 
 	os.makedirs(output_dir, exist_ok=True)
 
