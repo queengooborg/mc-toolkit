@@ -22,8 +22,9 @@
 
 #
 # Changelog:
-#   1.20.x (part 2):
+#   1.20.x (Update 2):
 #     Fixes the prices for andesite, diorite and granite
+#     Reduces the price of chainmail armor
 #     Some 1.21.x items were added as the recipes had been added into the 1.20.4 source code
 #
 #   1.20.x:

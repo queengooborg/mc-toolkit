@@ -297,10 +297,10 @@ worth:
   echoshard: 92.30
 
   # Armor, weapons and tools
-  chainmailboots: 330.00
-  chainmailchestplate: 715.00
-  chainmailhelmet: 330.00
-  chainmailleggings: 550.00
+  chainmailboots: 150.00
+  chainmailchestplate: 325.00
+  chainmailhelmet: 150.00
+  chainmailleggings: 250.00
   ironhorsearmor: 132.00
   goldenhorsearmor: 385.00
   diamondhorsearmor: 3300.00
