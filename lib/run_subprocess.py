@@ -8,6 +8,8 @@
 # Run a subprocess and return the code returned by the process
 #
 
+import subprocess
+
 def main(cmd, cwd, *args, **kwargs):
 	r = subprocess.run(cmd, cwd=str(cwd), *args, **kwargs)
 	return r.returncode
