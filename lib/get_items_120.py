@@ -608,7 +608,8 @@ def get_recipes(source_path, simplest_only=True):
 	# Get all dye colors
 	with open(Path(f"{source_path}/world/item/DyeColor.java")) as dcj:
 		for line in dcj.readlines():
-			match = re.match(r'^\s+public static final /\* enum \*/ DyeColor ([\w_]+) = new DyeColor\(', line)
+			# match = re.match(r'^\s+public static final /\* enum \*/ DyeColor ([\w_]+) = new DyeColor\(', line)
+			match = re.match(r'^\s+(\w+)\(\d+, "\w+", ', line)
 			if match:
 				dye_colors.append(match.group(1))
 				continue
