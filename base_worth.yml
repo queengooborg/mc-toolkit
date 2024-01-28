@@ -30,6 +30,9 @@ worth:
   pointeddripstone: 1.01
   sponge: 12.71
   wetsponge: 11.00
+  andesite: 1.70
+  diorite: 1.50
+  granite: 1.90
 
   # Base items
   snowball: 1.10
