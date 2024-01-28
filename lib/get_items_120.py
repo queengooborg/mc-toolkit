@@ -487,7 +487,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Recoloring Shulker Boxes
-	match = re.match(rf'{line_prefix}SpecialRecipeBuilder\.special\(RecipeSerializer\.SHULKER_BOX_COLORING\)', line)
+	match = re.match(rf'{line_prefix}SpecialRecipeBuilder\.special\((RecipeSerializer\.SHULKER_BOX_COLORING|ShulkerBoxColoring::new)\)', line)
 	if match:
 		for color in dye_colors:
 			add_recipe(recipes, f'{color}_SHULKER_BOX', {
