@@ -24,9 +24,11 @@ body:
     attributes:
       label: Is the item craftable?
       options:
+        - "Not sure"
         - "Yes"
         - "No"
-        - "Not sure"
+    validations:
+      required: true
   - id: notes
     type: textarea
     attributes:
