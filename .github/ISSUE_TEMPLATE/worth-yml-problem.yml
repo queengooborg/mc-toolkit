@@ -1,0 +1,30 @@
+name: "Problem with prices in worth.yml"
+description: Report an issue with the prices in outputted `worth.yml`
+body:
+  - id: feature
+    attributes:
+      label: What block(s)/item(s) have an unsatisfactory price?
+    validations:
+      required: true
+  - id: actual
+    attributes:
+      label: What is the current price of the block(s)/item(s)?
+    validations:
+      required: true
+  - id: expected
+    attributes:
+      label: What price(s) were you expecting instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: craftable
+    attributes:
+      label: Is the item craftable?
+      options:
+        - Yes
+        - No
+        - Not sure
+  - type: textarea
+    id: notes
+    attributes:
+      label: Is there anything else you would like to add to your report?
