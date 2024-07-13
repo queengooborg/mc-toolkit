@@ -18,13 +18,12 @@
 #   Firework Rockets have a flat price and need different pricing for each type (help wanted)
 #   Selling potions will always use the base price and does not use pricing specific to each type (help wanted)
 #   Smithing templates and pottery sherds have a uniform price for each respective item type and need to be separated (help wanted)
-#   The items for the Trial Chambers have not yet been added (help wanted)
 #
 
 #
 # Changelog:
 #   1.21.x:
-#     Adds most of the new 1.21.x items, besides Trial Chambers related items
+#     Add items introduced in 1.21.x
 #
 #   1.20.x (Update 5):
 #     Updates the price of ice and ice-related blocks
