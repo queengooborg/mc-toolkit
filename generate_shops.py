@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # 
-# EssentialsX to BossShopPro - generate_shops.py
-# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# mc-toolkit - generate_shops.py
+# © 2020-2024 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 # Generate BossShopPro shops from a worth.yml file
@@ -117,7 +117,7 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_shops", description="Generate BossShopPro configuration files using an EssentialsX worth.yml and Minecraft deobfuscated source code")
-	parser.add_argument('mc_version', nargs='?')
+	parser.add_argument('mc_version', nargs='?', )
 	parser.add_argument('-n', '--no_cache', action='store_true')
 	args = parser.parse_args()
 

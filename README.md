@@ -5,7 +5,7 @@ This toolkit is designed to perform two main tasks:
 - Decompiles, deobfuscates and scans the Minecraft source code to generate a list of items and their associated recipes
 - Using the generated item data, create an EssentialsX `worth.yml` and a BossShopPro + BS-ItemShops set of shops
 
-Developed and tested for 1.13 through 1.20.4.
+Developed and tested for 1.13 through 1.20.6. (Not ready for 1.21 yet.)
 
 > [!WARNING]
 > Source mappings are obtained directly from Microsoft, and may change at any time, even for older Minecraft versions.  Please be aware that this program may break as a result.
@@ -33,7 +33,7 @@ python3 generate_items.py [mc_version] (-n/--no_cache)
 This script generates a `worth.yml` for the [EssentialsX](https://www.spigotmc.org/resources/essentialsx.9089/) Bukkit/Spigot/Paper server plugin. This is used to generate https://gist.github.com/queengooborg/92d08120f0d6d25175f6c7a30e3ccac7.
 
 ```sh
-python3 generate_worth.py [mc_version] (-n/--no_cache)
+python3 generate_worth.py [mc_version] (-n/--no_cache) (-v/--vanilla)
 ```
 
 ## generate_shops.py

@@ -1,9 +1,9 @@
 #
-# EssentialsX to BossShopPro - base_worth.yml
-# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# mc-toolkit - base_worth.yml
+# © 2020-2024 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
-# The preset prices for the base items that do not have crafting recipes or should otherwise have an overridden price
+# The preset prices for the base items that do not have crafting recipes or should otherwise have an overridden price, which is used in generate_worth.py to generate an EssentialsX worth.yml file.
 #
 
 # Base blocks

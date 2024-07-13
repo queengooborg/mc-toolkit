@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # 
-# EssentialsX to BossShopPro - generate_worth.py
-# © 2020-2023 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
+# mc-toolkit - generate_worth.py
+# © 2020-2024 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 # Generate a worth.yml using some base values and recipes determined from Minecraft source
@@ -181,9 +181,9 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml",
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_worth", description="Generate an EssentialsX worth.yml file based on Minecraft recipes and a few base prices")
-	parser.add_argument('mc_version', nargs='?')
-	parser.add_argument('-n', '--no_cache', action='store_true')
-	parser.add_argument('-v', '--vanilla', action='store_true')
+	parser.add_argument('mc_version', nargs='?', help="The Minecraft version to use")
+	parser.add_argument('-n', '--no_cache', action='store_true', help="Regenerate everything from scratch")
+	parser.add_argument('-v', '--vanilla', action='store_true', help="Use vanilla item names, instead of the remappings EssentialsX wishes to use")
 	args = parser.parse_args()
 
 	generate_worth(args.mc_version, no_cache=args.no_cache, essentials=not args.vanilla)
