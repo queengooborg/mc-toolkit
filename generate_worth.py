@@ -23,7 +23,7 @@ except ImportError:
 script_dir = Path(os.path.dirname(__file__))
 output_dir = script_dir / "output"
 
-base_worth = yaml.load(open(script_dir / "base_worth.yml", 'r'), Loader=Loader)['worth']
+base_worth = yaml.load(open(script_dir / "base_worth.yml", 'r'), Loader=Loader)
 worth_header = open(script_dir / "worth_yml_header.yml", "r").read()
 
 def remap_ingredient(item_id):
