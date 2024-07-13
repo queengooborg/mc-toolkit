@@ -265,6 +265,8 @@ def simple_func(func_type, match):
 		return create_variant_recipe('cut', cost)
 	elif func_type == 'doorBuilder':
 		return create_variant_recipe('door', cost)
+	elif func_type == 'trapdoorBuilder':
+		return create_variant_recipe('trapdoor', cost)
 	elif func_type == 'hangingSign':
 		return {
 			'count': 6,
@@ -363,6 +365,32 @@ def simple_func(func_type, match):
 			'pattern': [
 				[cost, cost],
 				[cost, cost]
+			]
+		}
+	elif func_type == 'grate':
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 4,
+			},
+			'pattern': [
+				['', cost, ''],
+				[cost, '', cost],
+				['', cost, '']
+			]
+		}
+	elif func_type == 'copperBulb':
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 3,
+				'BLAZE_ROD': 1,
+				'REDSTONE': 1
+			},
+			'pattern': [
+				['', cost, ''],
+				[cost, 'BLAZE_ROD', cost],
+				['', 'REDSTONE', '']
 			]
 		}
 	else:

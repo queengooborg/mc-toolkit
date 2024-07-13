@@ -5,7 +5,7 @@ This toolkit is designed to perform two main tasks:
 - Decompiles, deobfuscates and scans the Minecraft source code to generate a list of items and their associated recipes
 - Using the generated item data, create an EssentialsX `worth.yml` and a BossShopPro + BS-ItemShops set of shops
 
-Developed and tested for 1.13 through 1.20.6. (Not ready for 1.21 yet.)
+Developed and tested for 1.13 through 1.21.
 
 > [!WARNING]
 > Source mappings are obtained directly from Microsoft, and may change at any time, even for older Minecraft versions.  Please be aware that this program may break as a result.

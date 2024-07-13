@@ -101,11 +101,12 @@ def calculate_worth(worth, items):
 			add_to_worth(worth, item, worth[material] * 0.75)
 			continue
 
-		# Oxidized copper blocks (EXPOSED_COPPER, WEATHERED_COPPER, OXIDIZED_COPPER)
-		elif item in ["EXPOSED_COPPER", "WEATHERED_COPPER", "OXIDIZED_COPPER"]:
-			if not 'CUT_COPPER' in worth:
+		# Oxidized copper blocks and doors
+		elif item.startswith(("EXPOSED_COPPER", "WEATHERED_COPPER", "OXIDIZED_COPPER")):
+			base_copper_item = "CUT_COPPER" if not "door" in item else ("COPPER_" + item.split("_COPPER_")[1])
+			if not base_copper_item in worth:
 				continue # Need to wait for calculation
-			add_to_worth(worth, item, worth['CUT_COPPER'] *
+			add_to_worth(worth, item, worth[base_copper_item] *
 				(0.5 if item == 'EXPOSED_COPPER' else 0.4 if item == 'WEATHERED_COPPER' else 0.3)
 			)
 			continue
