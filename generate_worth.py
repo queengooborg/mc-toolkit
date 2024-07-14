@@ -107,7 +107,7 @@ def calculate_worth(worth, items):
 			if not base_copper_item in worth:
 				continue # Need to wait for calculation
 			add_to_worth(worth, item, worth[base_copper_item] *
-				(0.5 if item == 'EXPOSED_COPPER' else 0.4 if item == 'WEATHERED_COPPER' else 0.3)
+				(0.5 if item.startswith('EXPOSED') else 0.4 if item.startswith('WEATHERED') else 0.3)
 			)
 			continue
 
