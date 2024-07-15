@@ -84,32 +84,26 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
+			item = None
+			group = 'MISC'
 			if match:
 				item = match.group(1)
-				item = item_substitutions.get(item, item) # Fix any typos present in source code
-
-
-				recipe = recipes.get(item)
-				if not include_creative and item in creative_only_items:
-					continue
 
 				group = match.group(2).replace('TAB_', '')
 				if group not in items:
 					group = 'MISC'
-
-				items[item] = recipe
-				categories[group]['items'].append(item)
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
 					item = match2.group(1)
-					item = item_substitutions.get(item, item) # Fix any typos present in source code
 
-					recipe = recipes.get(item)
-					if item in creative_only_items:
-						continue
+			if item:
+				item = item_substitutions.get(item, item) # Fix any typos present in source code
 
-					items[item] = recipe
-					categories['MISC']['items'].append(item)
+				if not include_creative and item in creative_only_items:
+					continue
+
+				items[item] = recipes.get(item)
+				categories[group]['items'].append(item)
 
 	return dict(items=items, categories=categories)
