@@ -427,7 +427,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shapeless recipes
-	match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
 	if match:
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.group(2) or 1),
@@ -439,7 +439,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shaped recipes
-	match = re.match(rf'{line_prefix}ShapedRecipeBuilder\.shaped\(RecipeCategory\.[\w_]+, (?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}ShapedRecipeBuilder\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
 	if match:
 		item = match.group(1)
 		ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}
@@ -456,7 +456,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Smelting recipes
-	match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		if match.group(1) == 'SMELTS_TO_GLASS':
 			add_recipe(recipes, match.group(2), {
@@ -484,7 +484,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Ore smelting recipes
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oreSmelting\((?:consumer|recipeOutput), ([\w_]+), RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.oreSmelting\((?:consumer|recipeOutput), ([\w_]+), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -496,7 +496,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Stonecutting recipes
-	match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), RecipeCategory\.[\w_]+, {one_ingredient_regex}(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}(?:, (\d+))?\)', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': match.group(3) or 1,
@@ -508,7 +508,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Netherite smithing recipes
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(?:legacyN|n)etheriteSmithing\((?:consumer|recipeOutput), {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(?:legacyN|n)etheriteSmithing\((?:consumer|recipeOutput), {one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -521,7 +521,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.colorBlockWithDye\((?:consumer|recipeOutput), list, list\d, "(\w+)"\)', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.colorBlockWithDye\((?:consumer|recipeOutput), list, list\d, "(\w+)"\)', line)
 	if match:
 		item = match.group(1).upper()
 		if simplest_only and item != 'WOOL':
@@ -554,7 +554,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 		# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-		match = re.match(rf'{line_prefix}VanillaRecipeProvider\.copySmithingTemplate\((?:consumer|recipeOutput), \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
+		match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.copySmithingTemplate\((?:consumer|recipeOutput), \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
 		if match:
 			add_recipe(recipes, match.group(2), {
 				'count': 2,
@@ -572,7 +572,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			return
 
 	# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\((?:consumer|recipeOutput), {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (?P<count>\d+))?', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.oneToOneConversionRecipe\((?:consumer|recipeOutput), {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (?P<count>\d+))?', line)
 	if match:
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.groupdict().get('count') or 1),
@@ -584,7 +584,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# 2x2/3x3 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(twoByTwo|threeByThree)Packer\((?:consumer|recipeOutput)(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(twoByTwo|threeByThree)Packer\((?:consumer|recipeOutput)(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
 	if match:
 		if match.group(1) == 'twoByTwo':
 			add_recipe(recipes, match.group(2), {
@@ -608,7 +608,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.nineBlockStorageRecipes(?:(?:Recipes)?WithCustom(?:Packing|Unpacking))?\((?:consumer|recipeOutput), RecipeCategory\.[\w_]+, {one_ingredient_regex}, RecipeCategory\.[\w_]+, {one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.nineBlockStorageRecipes(?:(?:Recipes)?WithCustom(?:Packing|Unpacking))?\((?:consumer|recipeOutput), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		is_nugget = match.group(1).endswith("_NUGGET")
 		# 1 block to 9 items
@@ -632,7 +632,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.(\w+)\((?:(?:consumer|recipeOutput), )?(?:RecipeCategory\.[\w_]+, )?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
+	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(\w+)\((?:(?:consumer|recipeOutput), )?(?:(?:RecipeCategory\.[\w_]+, )?)?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
 	if match:
 		match_type = match.group(1)
 
@@ -710,7 +710,12 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 						continue # Bamboo Mosaic recipe is defined elsewhere
 					add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 
-	with open(Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")) as vrpj:
+	if mc_version >= "1.19.3":
+		recipes_path = Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")
+	else:
+		recipes_path = Path(f"{source_path}/data/recipes/RecipeProvider.java")
+
+	with open(recipes_path) as vrpj:
 		for line in vrpj.readlines():
 			# Get smeltables lists
 			match = re.match(rf'^\s+private static final ImmutableList<ItemLike> (\w+_SMELTABLES) = ImmutableList\.of\(\(Object\)Items\.([\w_]+)(?:, \(Object\)Items\.([\w_]+))*\);', line)
