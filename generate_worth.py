@@ -12,7 +12,7 @@ import argparse, os
 from pathlib import Path
 
 from DecompilerMC.main import get_latest_version
-from lib import prepare_source, get_items, creative_only_items
+from lib import prepare_source, get_items, creative_only_items, Version
 
 import yaml
 try:
@@ -155,7 +155,7 @@ def remap_names_for_essentials(worth):
 
 def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml", essentials=True):
 	if not mc_version:
-		mc_version = get_latest_version()[1]
+		mc_version = Version(get_latest_version()[1])
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)['items']
@@ -191,4 +191,4 @@ if __name__ == '__main__':
 	parser.add_argument('-v', '--vanilla', action='store_true', help="Use vanilla item names, instead of the remappings EssentialsX wishes to use")
 	args = parser.parse_args()
 
-	generate_worth(args.mc_version, no_cache=args.no_cache, essentials=not args.vanilla)
+	generate_worth(Version(args.mc_version), no_cache=args.no_cache, essentials=not args.vanilla)

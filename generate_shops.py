@@ -12,7 +12,7 @@ import argparse, os, re
 from pathlib import Path
 
 from DecompilerMC.main import get_latest_version
-from lib import get_items, prepare_source
+from lib import get_items, prepare_source, Version
 from generate_worth import generate_worth
 
 import yaml
@@ -49,7 +49,7 @@ def get_worth(mc_version):
 
 def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro"):
 	if not mc_version:
-		mc_version = get_latest_version()[1]
+		mc_version = Version(get_latest_version()[1])
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)
@@ -117,8 +117,8 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_shops", description="Generate BossShopPro configuration files using an EssentialsX worth.yml and Minecraft deobfuscated source code")
-	parser.add_argument('mc_version', nargs='?', )
+	parser.add_argument('mc_version', nargs='?')
 	parser.add_argument('-n', '--no_cache', action='store_true')
 	args = parser.parse_args()
 
-	generate_shops(args.mc_version, no_cache=args.no_cache)
+	generate_shops(Version(args.mc_version), no_cache=args.no_cache)

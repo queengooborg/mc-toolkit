@@ -11,6 +11,8 @@
 import os, re, json
 from pathlib import Path
 
+from .version import Version
+
 line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
 one_ingredient_regex = r"(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
 ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
@@ -692,7 +694,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 				})
 				continue
 
-	if mc_version >= "1.17":
+	if mc_version >= Version("1.17"):
 		# Get recipes for waxable items
 		with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
 			for line in dcj.readlines():
@@ -722,7 +724,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 							continue # Bamboo Mosaic recipe is defined elsewhere
 						add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 
-	if mc_version >= "1.19.3":
+	if mc_version >= Version("1.19.3"):
 		recipes_path = Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")
 	else:
 		recipes_path = Path(f"{source_path}/data/recipes/RecipeProvider.java")

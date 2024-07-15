@@ -6,6 +6,7 @@
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
 
+from .version import Version
 from .get_items import main as get_items
 from .run_subprocess import main as run_subprocess
 from .prepare_source import main as prepare_source

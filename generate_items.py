@@ -12,14 +12,14 @@ import argparse, os, json
 from pathlib import Path
 
 from DecompilerMC.main import get_latest_version
-from lib import prepare_source, get_items
+from lib import prepare_source, get_items, Version
 
 script_dir = Path(os.path.dirname(__file__))
 output_dir = script_dir / "output"
 
 def generate_items(mc_version, no_cache=False, outpath=output_dir / "items.json"):
 	if not mc_version:
-		mc_version = get_latest_version()[1]
+		mc_version = Version(get_latest_version()[1])
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache, include_creative=True, all_recipes=True)
@@ -35,4 +35,4 @@ if __name__ == '__main__':
 	parser.add_argument('-n', '--no_cache', action='store_true', help="Regenerate everything from scratch")
 	args = parser.parse_args()
 
-	generate_items(args.mc_version, no_cache=args.no_cache)
+	generate_items(Version(args.mc_version), no_cache=args.no_cache)
