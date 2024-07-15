@@ -12,10 +12,15 @@ import os, re, json
 from pathlib import Path
 
 from .creative_only_items import creative_only_items
+from .get_recipes import get_recipes
 
 # Get items list
-def get_items(source_path, mc_version, include_creative=False):
+def get_items(source_path, mc_version, include_creative=False, all_recipes=False):
 	items = {}
+
+	recipes = {}
+	if mc_version >= "1.19.3":
+		recipes = get_recipes(source_path, mc_version, simplest_only=not all_recipes)
 
 	categories = {
 		'BUILDING_BLOCKS': {
@@ -82,6 +87,8 @@ def get_items(source_path, mc_version, include_creative=False):
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
 			if match:
 				item = match.group(1)
+
+				recipe = recipes.get(item)
 				if not include_creative and item in creative_only_items:
 					continue
 
@@ -89,16 +96,21 @@ def get_items(source_path, mc_version, include_creative=False):
 				if group not in items:
 					group = 'MISC'
 
-				items[item] = {}
+				items[item] = recipe
 				categories[group]['items'].append(item)
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
 					item = match2.group(1)
+
+					if item == "CUT_STANDSTONE_SLAB":
+						item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
+
+					recipe = recipes.get(item)
 					if item in creative_only_items:
 						continue
 
-					items[item] = {}
+					items[item] = recipe
 					categories['MISC']['items'].append(item)
 
 	return dict(items=items, categories=categories)
