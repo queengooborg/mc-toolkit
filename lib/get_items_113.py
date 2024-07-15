@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .creative_only_items import creative_only_items
 from .get_recipes import get_recipes
+from .item_substitutions import item_substitutions
 
 # Get items list
 def get_items(source_path, mc_version, include_creative=False, all_recipes=False):
@@ -85,9 +86,8 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
 			if match:
 				item = match.group(1)
+				item = item_substitutions.get(item, item) # Fix any typos present in source code
 
-				if item == "CUT_STANDSTONE_SLAB":
-					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 
 				recipe = recipes.get(item)
 				if not include_creative and item in creative_only_items:
@@ -103,6 +103,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
 					item = match2.group(1)
+					item = item_substitutions.get(item, item) # Fix any typos present in source code
 
 					recipe = recipes.get(item)
 					if item in creative_only_items:
