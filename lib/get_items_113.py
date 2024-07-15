@@ -99,6 +99,6 @@ def get_items(source_path, mc_version, include_creative=False):
 						continue
 
 					items[item] = {}
-					items['MISC']['items'].append(item)
+					categories['MISC']['items'].append(item)
 
 	return dict(items=items, categories=categories)
