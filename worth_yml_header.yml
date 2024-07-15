@@ -22,6 +22,9 @@
 
 #
 # Changelog:
+#   1.21.x (Update 2):
+#     Items with shapeless crafting recipes are now calculated properly and account for the correct count of all ingredients
+#
 #   1.21.x:
 #     Add items introduced in 1.21.x
 #

@@ -432,7 +432,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.group(2) or 1),
 			'ingredients': {
-				format_item_name(i.group(1) or i.groups()[1:-1]): int(i.groupdict().get('count', 1)) for i in re.finditer(rf'\.requires\({ingredient_regex}(?:, (/P<count>\d+))?\)', line)
+				format_item_name(i.group(1) or i.groups()[1:-1]): int(i.groupdict().get('count') or 1) for i in re.finditer(rf'\.requires\({ingredient_regex}(?:, (?P<count>\d+))?\)', line)
 			},
 			'pattern': None
 		})
@@ -572,10 +572,10 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			return
 
 	# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\((?:consumer|recipeOutput), {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (/P<count>\d+))?', line)
+	match = re.match(rf'{line_prefix}VanillaRecipeProvider\.oneToOneConversionRecipe\((?:consumer|recipeOutput), {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (?P<count>\d+))?', line)
 	if match:
 		add_recipe(recipes, match.group(1), {
-			'count': int(match.groupdict().get('count', 1)),
+			'count': int(match.groupdict().get('count') or 1),
 			'ingredients': {
 				match.group(2): 1
 			},
