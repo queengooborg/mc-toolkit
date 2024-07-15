@@ -58,7 +58,7 @@ def convert_recipe_pattern(ingredients, raw_pattern):
 
 # Create recipe for common block variants
 def create_variant_recipe(variant, cost):
-	if variant == 'button':
+	if variant in 'button':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -200,6 +200,8 @@ def simple_func(func_type, match):
 	cost = match.group(5) or match.group(6)
 	count = int(match.group(8) or 1)
 
+	if func_type == 'woodenButton':
+		return create_variant_recipe('button', cost)
 	if func_type == 'banner':
 		return create_variant_recipe('banner', cost)
 	elif func_type == 'bedFromPlanksAndWool':
@@ -223,7 +225,7 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type == 'carpet':
+	elif func_type in ['carpet', 'carpetFromWool']:
 		return create_variant_recipe('carpet', cost)
 	elif func_type in ['chiseled', 'chiseledBuilder']:
 		return create_variant_recipe('slab', cost)
@@ -288,10 +290,16 @@ def simple_func(func_type, match):
 		}
 	elif func_type in ['cut', 'cutBuilder']:
 		return create_variant_recipe('cut', cost)
-	elif func_type == 'doorBuilder':
+	elif func_type in ['doorBuilder', 'woodenDoor']:
 		return create_variant_recipe('door', cost)
-	elif func_type == 'trapdoorBuilder':
+	elif func_type in ['trapdoorBuilder', 'woodenTrapdoor']:
 		return create_variant_recipe('trapdoor', cost)
+	elif func_type == 'woodenFence':
+		return create_variant_recipe('fence', cost)
+	elif func_type == 'woodenFenceGate':
+		return create_variant_recipe('fenceGate', cost)
+	elif func_type == 'woodenSign':
+		return create_variant_recipe('sign', cost)
 	elif func_type == 'hangingSign':
 		return {
 			'count': 6,
@@ -317,11 +325,11 @@ def simple_func(func_type, match):
 		}
 	elif func_type in ['polished', 'polishedBuilder']:
 		return create_variant_recipe('polished', cost)
-	elif func_type == 'pressurePlate':
+	elif func_type in ['pressurePlate', 'woodenPressurePlate']:
 		return create_variant_recipe('pressurePlate', cost)
-	elif func_type in ['slab', 'slabBuilder']:
+	elif func_type in ['slab', 'slabBuilder', 'woodenSlab']:
 		return create_variant_recipe('slab', cost)
-	elif func_type == 'stairBuilder':
+	elif func_type in ['stairBuilder', 'woodenStairs']:
 		return create_variant_recipe('stairs', cost)
 	elif func_type == 'stainedGlassFromGlassAndDye':
 		return {
@@ -429,6 +437,9 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	# Shapeless recipes
 	match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
 	if match:
+		if simplest_only and match.group(1) == 'DRIED_KELP':
+			return
+
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.group(2) or 1),
 			'ingredients': {
@@ -681,34 +692,35 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 				})
 				continue
 
-	# Get recipes for waxable items
-	with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
-		for line in dcj.readlines():
-			match = re.match(rf'^\s+public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
-			if match:
-				pairs = re.finditer(rf'\.put\(\(Object\){one_ingredient_regex}, \(Object\){one_ingredient_regex}\)', line)
-				for pair in pairs:
-					add_recipe(recipes, pair.group(2), {
-						'count': 1,
-						'ingredients': {
-							pair.group(1): 1,
-							'HONEYCOMB': 1
-						},
-						'pattern': None
-					})
-				continue
+	if mc_version >= "1.17":
+		# Get recipes for waxable items
+		with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
+			for line in dcj.readlines():
+				match = re.match(rf'^\s+public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
+				if match:
+					pairs = re.finditer(rf'\.put\(\(Object\){one_ingredient_regex}, \(Object\){one_ingredient_regex}\)', line)
+					for pair in pairs:
+						add_recipe(recipes, pair.group(2), {
+							'count': 1,
+							'ingredients': {
+								pair.group(1): 1,
+								'HONEYCOMB': 1
+							},
+							'pattern': None
+						})
+					continue
 
-	# Get recipes for block families (stairs, fences, etc.)
-	with open(Path(f"{source_path}/data/BlockFamilies.java")) as bfj:
-		for line in bfj.readlines():
-			match = re.match(rf'^\s+public static final BlockFamily [\w_]+ = BlockFamilies\.familyBuilder\({one_ingredient_regex}\)(.*)\.getFamily\(\);$', line)
-			if match:
-				sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
-				for s in sets:
-					variant = s.group(1)
-					if variant == 'mosaic':
-						continue # Bamboo Mosaic recipe is defined elsewhere
-					add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
+		# Get recipes for block families (stairs, fences, etc.)
+		with open(Path(f"{source_path}/data/BlockFamilies.java")) as bfj:
+			for line in bfj.readlines():
+				match = re.match(rf'^\s+public static final BlockFamily [\w_]+ = BlockFamilies\.familyBuilder\({one_ingredient_regex}\)(.*)\.getFamily\(\);$', line)
+				if match:
+					sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
+					for s in sets:
+						variant = s.group(1)
+						if variant == 'mosaic':
+							continue # Bamboo Mosaic recipe is defined elsewhere
+						add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 
 	if mc_version >= "1.19.3":
 		recipes_path = Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")

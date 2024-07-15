@@ -32,17 +32,21 @@ def remap_ingredient(item_id):
 		'LOGS': 'OAK_LOG',
 		'LOGS_THAT_BURN': 'OAK_LOG',
 		'WOODEN_SLABS': 'OAK_SLAB',
-		'COAL/CHARCOAL': 'COAL',
 		'COALS': 'COAL',
 		'WOOL': 'WHITE_WOOL',
 		'SOUL_FIRE_BASE_BLOCKS': 'SOUL_SOIL',
 		'STONE_CRAFTING_MATERIALS': 'COBBLESTONE',
 		'STONE_TOOL_MATERIALS': 'COBBLESTONE',
-		'SAND/RED_SAND': 'SAND',
+		'CHISELED_QUARTZ_BLOCK/QUARTZ_PILLAR': 'QUARTZ_PILLAR',
+		'FURNACE_MATERIALS': 'COBBLESTONE',
+		'WOODEN_FENCES': 'OAK_FENCE'
 	}
 
 	if item_id in remappings:
 		return remappings[item_id]
+
+	if '/' in item_id:
+		item_id = item_id.split('/')[0]
 	elif item_id.endswith('_LOGS'):
 		item_id = item_id.replace('_LOGS', '_LOG')
 	elif item_id.endswith('_STEMS'):
