@@ -17,6 +17,9 @@ def main(mc_version, silent=False):
 	decompiler_path = Path(os.path.dirname(__file__)) / "../DecompilerMC"
 	source_path = decompiler_path / f"src/{mc_version}/client/net/minecraft"
 
+	if mc_version <= "1.14.3":
+		raise Exception("DecompilerMC cannot decompile Minecraft 1.14.3 or lower, as no source mappings are provided")
+
 	if not source_path.exists():
 		if not silent:
 			print("Decompiled sources not found, performing decompilation now...  This may take a while, please be patient!\n")
