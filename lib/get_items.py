@@ -12,7 +12,7 @@ import os, re, json
 from pathlib import Path
 
 from .get_items_113 import get_items as get_items_113
-from .get_items_120 import get_items as get_items_120
+from .get_items_1193 import get_items as get_items_1193
 from .creative_only_items import creative_only_items
 
 cache_dir = Path(os.path.dirname(__file__)) / "../output/itemcache"
@@ -24,8 +24,8 @@ def main(source_path, mc_version, no_cache=False, include_creative=False, all_re
 		return json.load(open(cache_path, 'r'))
 
 	data = {}
-	if mc_version >= '1.20':
-		data = get_items_120(source_path, mc_version, include_creative)
+	if mc_version >= '1.19.3':
+		data = get_items_1193(source_path, mc_version, include_creative)
 	else:
 		data = get_items_113(source_path, mc_version, include_creative)
 

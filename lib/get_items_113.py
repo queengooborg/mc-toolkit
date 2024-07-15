@@ -5,7 +5,7 @@
 # © 2020-2024 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
-# Get items list from Minecraft source code for 1.13 through 1.19, sorted by creative mode tabs
+# Get items list from Minecraft source code for 1.13 through 1.19.2, sorted by creative mode tabs
 #
 
 import os, re, json
@@ -18,9 +18,7 @@ from .get_recipes import get_recipes
 def get_items(source_path, mc_version, include_creative=False, all_recipes=False):
 	items = {}
 
-	recipes = {}
-	if mc_version >= "1.19.3":
-		recipes = get_recipes(source_path, mc_version, simplest_only=not all_recipes)
+	recipes = get_recipes(source_path, mc_version, simplest_only=not all_recipes)
 
 	categories = {
 		'BUILDING_BLOCKS': {
@@ -66,7 +64,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 	}
 
 	if mc_version >= '1.17':
-		# 1.17-1.19
+		# 1.17-1.19.2
 		itemgroupname = 'CreativeModeTab'
 		itemgroupjava = Path(f"{source_path}/world/item/{itemgroupname}.java")
 		itemsjava = Path(f"{source_path}/world/item/Items.java")
@@ -88,6 +86,9 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 			if match:
 				item = match.group(1)
 
+				if item == "CUT_STANDSTONE_SLAB":
+					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
+
 				recipe = recipes.get(item)
 				if not include_creative and item in creative_only_items:
 					continue
@@ -102,9 +103,6 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
 				if match2:
 					item = match2.group(1)
-
-					if item == "CUT_STANDSTONE_SLAB":
-						item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
 
 					recipe = recipes.get(item)
 					if item in creative_only_items:

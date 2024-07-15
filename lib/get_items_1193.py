@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 # 
-# mc-toolkit - lib/get_items_120
+# mc-toolkit - lib/get_items_1193
 # © 2020-2024 Vinyl Da.i'gyu-Kazotetsu [https://www.queengoob.org].
 # This code is licensed under the GNU GPLv3 license (https://choosealicense.com/licenses/gpl-3.0/).
 #
-# Get items list from Minecraft source code for 1.20, sorted by creative mode tabs
+# Get items list from Minecraft source code for 1.19.3 and above, sorted by creative mode tabs
 #
 
 import os, re, json
@@ -45,7 +45,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 		# Reading source code line by line to avoid regex backtracking issues
 		for line in cmtj.readlines():
-			groupmatch = re.search(r"Registry\.register\(registry, ([\w_]+), CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)(?:\.alignedRight\(\))?\.displayItems\(\(itemDisplayParameters, output\) -> {", line)
+			groupmatch = re.search(r"(?:Registry\.register\(registry, ([\w_]+), )?CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)(?:\.alignedRight\(\))?\.displayItems\(\((itemDisplayParameters|featureFlagSet), output(?:, bl)?\) -> {", line)
 			if groupmatch:
 				current_group = groupmatch
 
