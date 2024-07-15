@@ -25,7 +25,7 @@ def main(mc_version, silent=False):
 		if not silent:
 			print("Decompiled sources not found, performing decompilation now...  This may take a while, please be patient!\n")
 
-		if run_subprocess(["python3", "main.py", f"--mcversion={mc_version}", "--quiet"], decompiler_path) != 0:
+		if run_subprocess(["python3", "main.py", f"--mcversion={mc_version}", "--quiet", "--force"], decompiler_path) != 0:
 			raise Exception("Failed to decompile sources, please try again")
 
 		if not silent:
