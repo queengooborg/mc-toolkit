@@ -18,7 +18,6 @@ from .item_substitutions import item_substitutions
 # Get items list
 def get_items(source_path, mc_version, include_creative=False, all_recipes=False):
 	items = {}
-
 	recipes = get_recipes(source_path, mc_version, simplest_only=not all_recipes)
 
 	categories = {
@@ -64,16 +63,9 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 		},
 	}
 
-	if mc_version >= '1.17':
-		# 1.17-1.19.2
-		itemgroupname = 'CreativeModeTab'
-		itemgroupjava = Path(f"{source_path}/world/item/{itemgroupname}.java")
-		itemsjava = Path(f"{source_path}/world/item/Items.java")
-	else:
-		# 1.13-1.16
-		itemgroupname = 'ItemGroup'
-		itemgroupjava = Path(f"{source_path}/item/{itemgroupname}.java")
-		itemsjava = Path(f"{source_path}/item/Items.java")
+	itemgroupname = 'CreativeModeTab'
+	itemgroupjava = Path(f"{source_path}/world/item/{itemgroupname}.java")
+	itemsjava = Path(f"{source_path}/world/item/Items.java")
 
 	with open(str(itemgroupjava), 'r') as igj:
 		for line in igj.readlines():
