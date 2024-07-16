@@ -16,9 +16,16 @@ class Version:
 		self.patch = int(parts[2]) if len(parts) > 2 else 0
 
 	def __str__(self):
+		if self.minor == 0:
+			return f"{self.major}"
+		if self.patch == 0:
+			return f"{self.major}.{self.minor}"
 		return f"{self.major}.{self.minor}.{self.patch}"
 
 	def __eq__(self, other):
+		if type(other) == str:
+			other = Version(other)
+
 		return self.major == other.major and \
 					 self.minor == other.minor and \
 					 self.patch == other.patch
