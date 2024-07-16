@@ -8,6 +8,5 @@
 
 from .version import Version
 from .get_items import main as get_items
-from .run_subprocess import main as run_subprocess
 from .prepare_source import main as prepare_source
 from .creative_only_items import creative_only_items

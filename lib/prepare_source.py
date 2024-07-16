@@ -9,10 +9,14 @@
 #
 
 import os
+import sys
 from pathlib import Path
 
-from .run_subprocess import main as run_subprocess
 from .version import Version
+
+sys.path.insert(0, Path(__file__).parent.parent)
+
+from DecompilerMC.main import run as do_decompile
 
 def main(mc_version, silent=False):
 	decompiler_path = Path(os.path.dirname(__file__)) / "../DecompilerMC"
@@ -25,8 +29,7 @@ def main(mc_version, silent=False):
 		if not silent:
 			print("Decompiled sources not found, performing decompilation now...  This may take a while, please be patient!\n")
 
-		if run_subprocess(["python3", "main.py", f"--mcversion={mc_version}", "--clean"], decompiler_path) != 0:
-			raise Exception("Failed to decompile sources, please try again")
+		do_decompile(str(mc_version), "client", quiet=silent, clean=True)
 
 		if not silent:
 			print("\nDecompilation complete!")
