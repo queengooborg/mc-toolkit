@@ -48,9 +48,6 @@ def get_worth(mc_version):
 	return worth_data['worth']
 
 def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro"):
-	if not mc_version:
-		mc_version = Version(get_latest_version()[1])
-
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)
 	worth = get_worth(mc_version)
@@ -117,7 +114,8 @@ def generate_shops(mc_version, no_cache=False, outpath=output_dir / "BossShopPro
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_shops", description="Generate BossShopPro configuration files using an EssentialsX worth.yml and Minecraft deobfuscated source code")
-	parser.add_argument('mc_version', nargs='?')
+	parser.add_argument('mc_version', nargs='?', default=get_latest_version()[1], help="The Minecraft version to use")
+	parser.add_argument('-n', '--no_cache', action='store_true', help="Regenerate everything from scratch")
 	parser.add_argument('-n', '--no_cache', action='store_true')
 	args = parser.parse_args()
 

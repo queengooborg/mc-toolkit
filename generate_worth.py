@@ -154,9 +154,6 @@ def remap_names_for_essentials(worth):
 	return new_worth
 
 def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml", essentials=True):
-	if not mc_version:
-		mc_version = Version(get_latest_version()[1])
-
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)['items']
 	worth = base_worth
@@ -186,7 +183,7 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml",
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_worth", description="Generate an EssentialsX worth.yml file based on Minecraft recipes and a few base prices")
-	parser.add_argument('mc_version', nargs='?', help="The Minecraft version to use")
+	parser.add_argument('mc_version', nargs='?', default=get_latest_version()[1], help="The Minecraft version to use")
 	parser.add_argument('-n', '--no_cache', action='store_true', help="Regenerate everything from scratch")
 	parser.add_argument('-v', '--vanilla', action='store_true', help="Use vanilla item names, instead of the remappings EssentialsX wishes to use")
 	args = parser.parse_args()
