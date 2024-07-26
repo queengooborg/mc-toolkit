@@ -7,9 +7,6 @@ This toolkit is designed to perform two main tasks:
 
 Developed and tested for ~~1.13~~ 1.14.4 through 1.21.
 
-> [!WARNING]
-> Source mappings are obtained directly from Microsoft, and may change at any time, even for older Minecraft versions.  Please be aware that this program may break as a result.
-
 *Need a worth.yml with all the new items?  Check out my fork of [X00LA's file](https://github.com/X00LA/Bukkit-Essentials-worth.yml)!  https://gist.github.com/queengooborg/92d08120f0d6d25175f6c7a30e3ccac7*
 
 ## Requirements
