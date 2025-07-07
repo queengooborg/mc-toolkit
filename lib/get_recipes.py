@@ -68,7 +68,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': None
 		}
-	elif variant in ['carpet', 'pressurePlate']:
+	if variant in ['carpet', 'pressurePlate']:
 		return {
 			'count': 3 if variant == 'carpet' else 1,
 			'ingredients': {
@@ -76,7 +76,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': [[cost, cost]]
 		}
-	elif variant in ['chiseled', 'mosaic']:
+	if variant in ['chiseled', 'mosaic']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -84,7 +84,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': [[cost], [cost]]
 		}
-	elif variant == 'cracked':
+	if variant == 'cracked':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -92,7 +92,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': 'furnace'
 		}
-	elif variant == 'cut':
+	if variant == 'cut':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -103,7 +103,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	elif variant == 'door':
+	if variant == 'door':
 		return {
 			'count': 3,
 			'ingredients': {
@@ -115,7 +115,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	elif variant in ['fence', 'customFence']:
+	if variant in ['fence', 'customFence']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -127,7 +127,7 @@ def create_variant_recipe(variant, cost):
 				[cost, 'STICK', cost]
 			]
 		}
-	elif variant in ['fenceGate', 'customFenceGate']:
+	if variant in ['fenceGate', 'customFenceGate']:
 		return {
 			'count': 1,
 			'ingredients': {
@@ -139,7 +139,7 @@ def create_variant_recipe(variant, cost):
 				['STICK', cost, 'STICK']
 			]
 		}
-	elif variant == 'polished':
+	if variant == 'polished':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -150,7 +150,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	elif variant in ['sign', 'banner']:
+	if variant in ['sign', 'banner']:
 		return {
 			'count': 3 if variant == 'sign' else 1,
 			'ingredients': {
@@ -163,7 +163,7 @@ def create_variant_recipe(variant, cost):
 				['', 'STICK', '']
 			]
 		}
-	elif variant == 'slab':
+	if variant == 'slab':
 		return {
 			'count': 6,
 			'ingredients': {
@@ -171,7 +171,7 @@ def create_variant_recipe(variant, cost):
 			},
 			'pattern': [[cost, cost, cost]]
 		}
-	elif variant == 'stairs':
+	if variant == 'stairs':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -183,7 +183,7 @@ def create_variant_recipe(variant, cost):
 				[cost, cost, cost]
 			]
 		}
-	elif variant in ['trapdoor', 'wall']:
+	if variant in ['trapdoor', 'wall']:
 		return {
 			'count': 2 if variant == 'trapdoor' else 6,
 			'ingredients': {
@@ -194,8 +194,8 @@ def create_variant_recipe(variant, cost):
 				[cost, cost, cost]
 			]
 		}
-	else:
-		raise Exception(f'Unhandled type "{variant}" detected for variant!')
+	
+	raise Exception(f'Unhandled type "{variant}" detected for variant!')
 
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 def simple_func(func_type, match):
@@ -206,7 +206,7 @@ def simple_func(func_type, match):
 		return create_variant_recipe('button', cost)
 	if func_type == 'banner':
 		return create_variant_recipe('banner', cost)
-	elif func_type == 'bedFromPlanksAndWool':
+	if func_type == 'bedFromPlanksAndWool':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -218,7 +218,7 @@ def simple_func(func_type, match):
 				['PLANKS', 'PLANKS', 'PLANKS']
 			]
 		}
-	elif func_type == 'candle':
+	if func_type == 'candle':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -227,11 +227,11 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type in ['carpet', 'carpetFromWool']:
+	if func_type in ['carpet', 'carpetFromWool']:
 		return create_variant_recipe('carpet', cost)
-	elif func_type in ['chiseled', 'chiseledBuilder']:
+	if func_type in ['chiseled', 'chiseledBuilder']:
 		return create_variant_recipe('slab', cost)
-	elif func_type == 'chestBoat':
+	if func_type == 'chestBoat':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -240,7 +240,7 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type == 'coloredWoolFromWhiteWoolAndDye':
+	if func_type == 'coloredWoolFromWhiteWoolAndDye':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -249,7 +249,7 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type == 'coloredCarpetFromWhiteCarpetAndDye':
+	if func_type == 'coloredCarpetFromWhiteCarpetAndDye':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -258,7 +258,7 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type == 'coloredTerracottaFromTerracottaAndDye':
+	if func_type == 'coloredTerracottaFromTerracottaAndDye':
 		return {
 			'count': 8,
 			'ingredients': {
@@ -271,7 +271,7 @@ def simple_func(func_type, match):
 				['TERRACOTTA', 'TERRACOTTA', 'TERRACOTTA']
 			]
 		}
-	elif func_type == 'bedFromWhiteBedAndDye':
+	if func_type == 'bedFromWhiteBedAndDye':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -280,7 +280,7 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type == 'concretePowder':
+	if func_type == 'concretePowder':
 		return {
 			'count': 8,
 			'ingredients': {
@@ -290,19 +290,19 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type in ['cut', 'cutBuilder']:
+	if func_type in ['cut', 'cutBuilder']:
 		return create_variant_recipe('cut', cost)
-	elif func_type in ['doorBuilder', 'woodenDoor']:
+	if func_type in ['doorBuilder', 'woodenDoor']:
 		return create_variant_recipe('door', cost)
-	elif func_type in ['trapdoorBuilder', 'woodenTrapdoor']:
+	if func_type in ['trapdoorBuilder', 'woodenTrapdoor']:
 		return create_variant_recipe('trapdoor', cost)
-	elif func_type == 'woodenFence':
+	if func_type == 'woodenFence':
 		return create_variant_recipe('fence', cost)
-	elif func_type == 'woodenFenceGate':
+	if func_type == 'woodenFenceGate':
 		return create_variant_recipe('fenceGate', cost)
-	elif func_type == 'woodenSign':
+	if func_type == 'woodenSign':
 		return create_variant_recipe('sign', cost)
-	elif func_type == 'hangingSign':
+	if func_type == 'hangingSign':
 		return {
 			'count': 6,
 			'ingredients': {
@@ -315,9 +315,9 @@ def simple_func(func_type, match):
 				[cost, cost, cost]
 			]
 		}
-	elif func_type == 'mosaicBuilder':
+	if func_type == 'mosaicBuilder':
 		return create_variant_recipe('mosaic', cost)
-	elif func_type in ['planksFromLog', 'planksFromLogs']:
+	if func_type in ['planksFromLog', 'planksFromLogs']:
 		return {
 			'count': count or 4,
 			'ingredients': {
@@ -325,15 +325,15 @@ def simple_func(func_type, match):
 			},
 			'pattern': None
 		}
-	elif func_type in ['polished', 'polishedBuilder']:
+	if func_type in ['polished', 'polishedBuilder']:
 		return create_variant_recipe('polished', cost)
-	elif func_type in ['pressurePlate', 'woodenPressurePlate']:
+	if func_type in ['pressurePlate', 'woodenPressurePlate']:
 		return create_variant_recipe('pressurePlate', cost)
-	elif func_type in ['slab', 'slabBuilder', 'woodenSlab']:
+	if func_type in ['slab', 'slabBuilder', 'woodenSlab']:
 		return create_variant_recipe('slab', cost)
-	elif func_type in ['stairBuilder', 'woodenStairs']:
+	if func_type in ['stairBuilder', 'woodenStairs']:
 		return create_variant_recipe('stairs', cost)
-	elif func_type == 'stainedGlassFromGlassAndDye':
+	if func_type == 'stainedGlassFromGlassAndDye':
 		return {
 			'count': 8,
 			'ingredients': {
@@ -346,7 +346,7 @@ def simple_func(func_type, match):
 				['GLASS', 'GLASS', 'GLASS']
 			]
 		}
-	elif func_type == 'stainedGlassPaneFromGlassPaneAndDye':
+	if func_type == 'stainedGlassPaneFromGlassPaneAndDye':
 		return {
 			'count': 8,
 			'ingredients': {
@@ -359,7 +359,7 @@ def simple_func(func_type, match):
 				['GLASS_PANE', 'GLASS_PANE', 'GLASS_PANE']
 			]
 		}
-	elif func_type == 'stainedGlassPaneFromStainedGlass':
+	if func_type == 'stainedGlassPaneFromStainedGlass':
 		return {
 			'count': 16,
 			'ingredients': {
@@ -370,7 +370,7 @@ def simple_func(func_type, match):
 				[cost, cost, cost]
 			]
 		}
-	elif func_type == 'stonecutterResultFromBase':
+	if func_type == 'stonecutterResultFromBase':
 		return {
 			'count': count or 1,
 			'ingredients': {
@@ -378,9 +378,9 @@ def simple_func(func_type, match):
 			},
 			'pattern': 'stonecutter'
 		}
-	elif func_type in ['wall', 'wallBuilder']:
+	if func_type in ['wall', 'wallBuilder']:
 		return create_variant_recipe('wall', cost)
-	elif func_type == 'woodenBoat':
+	if func_type == 'woodenBoat':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -391,7 +391,7 @@ def simple_func(func_type, match):
 				[cost, cost, cost]
 			]
 		}
-	elif func_type == 'woodFromLogs':
+	if func_type == 'woodFromLogs':
 		return {
 			'count': 3,
 			'ingredients': {
@@ -402,7 +402,7 @@ def simple_func(func_type, match):
 				[cost, cost]
 			]
 		}
-	elif func_type == 'grate':
+	if func_type == 'grate':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -414,7 +414,7 @@ def simple_func(func_type, match):
 				['', cost, '']
 			]
 		}
-	elif func_type == 'copperBulb':
+	if func_type == 'copperBulb':
 		return {
 			'count': 4,
 			'ingredients': {
@@ -428,8 +428,8 @@ def simple_func(func_type, match):
 				['', 'REDSTONE', '']
 			]
 		}
-	else:
-		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
+	
+	raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
 
 def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables):
 	# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
