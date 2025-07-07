@@ -44,6 +44,8 @@ def remap_ingredient(item_id):
 		'IRON_TOOL_MATERIALS': 'IRON_INGOT',
 		'GOLD_TOOL_MATERIALS': 'GOLD_INGOT',
 		'DIAMOND_TOOL_MATERIALS': 'DIAMOND',
+		'EGGS': 'EGG',
+		'LEAVES': 'OAK_LEAVES'
 	}
 
 	if item_id in remappings:
