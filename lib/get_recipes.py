@@ -428,6 +428,19 @@ def simple_func(func_type, match):
 				['', 'REDSTONE', '']
 			]
 		}
+	if func_type == 'harness':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 1,
+				'DRIED_GHAST': 2,
+				'LEATHER': 3
+			},
+			'pattern': [
+				['LEATHER', 'LEATHER', 'LEATHER'],
+				['DRIED_GHAST', cost, 'DRIED_GHAST']
+			]
+		}
 	
 	raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
 
@@ -534,7 +547,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.colorBlockWithDye\((?:(?:consumer|recipeOutput), )?list, list\d, "(\w+)"\)', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.color(?:Block|Item)WithDye\((?:(?:consumer|recipeOutput), )?list, list\d, "(\w+)"(?:, RecipeCategory\.[\w_]+)?\)', line)
 	if match:
 		item = match.group(1).upper()
 		if simplest_only and item != 'WOOL':
@@ -657,6 +670,23 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 				},
 				'pattern': None
 			})
+		return
+
+	# Dried Ghast -- see net.minecraft.data.recipes.RecipeProvider (1.21.6)
+	match = re.match(rf'{line_prefix}this\.dryGhast\({one_ingredient_regex}\)', line)
+	if match:
+		add_recipe(recipes, match.group(1), {
+			'count': 1,
+			'ingredients': {
+				'GHAST_TEAR': 8,
+				'SOUL_SAND': 1
+			},
+			'pattern': [
+				['GHAST_TEAR', 'GHAST_TEAR', 'GHAST_TEAR'],
+				['GHAST_TEAR', 'SOUL_SAND', 'GHAST_TEAR'],
+				['GHAST_TEAR', 'GHAST_TEAR', 'GHAST_TEAR']
+			]
+		})
 		return
 
 	# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
