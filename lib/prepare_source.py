@@ -29,7 +29,7 @@ def main(mc_version, silent=False):
 		if not silent:
 			print("Decompiled sources not found, performing decompilation now...  This may take a while, please be patient!\n")
 
-		do_decompile(str(mc_version), "client", quiet=silent, clean=True)
+		do_decompile(str(mc_version), "client", clean=True)
 
 		if not silent:
 			print("\nDecompilation complete!")
