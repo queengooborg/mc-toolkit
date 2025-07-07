@@ -14,7 +14,7 @@ from pathlib import Path
 from .version import Version
 
 line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
-one_ingredient_regex = r"(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
+one_ingredient_regex = r"(?:\(ItemLike\))?(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
 ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
 
 def format_item_name(name):
@@ -195,7 +195,7 @@ def create_variant_recipe(variant, cost):
 			]
 		}
 	else:
-		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
+		raise Exception(f'Unhandled type "{variant}" detected for variant!')
 
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 def simple_func(func_type, match):
@@ -429,7 +429,7 @@ def simple_func(func_type, match):
 			]
 		}
 	else:
-		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
+		raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
 
 def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables):
 	# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
@@ -437,7 +437,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shapeless recipes
-	match = re.match(rf'{line_prefix}ShapelessRecipeBuilder\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:ShapelessRecipeBuilder|this)\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
 	if match:
 		if simplest_only and match.group(1) == 'DRIED_KELP':
 			return
@@ -452,7 +452,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shaped recipes
-	match = re.match(rf'{line_prefix}ShapedRecipeBuilder\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:ShapedRecipeBuilder|this)\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
 	if match:
 		item = match.group(1)
 		ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}
@@ -469,7 +469,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Smelting recipes
-	match = re.match(rf'{line_prefix}SimpleCookingRecipeBuilder\.smelting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:SimpleCookingRecipeBuilder|this)\.smelting\((?:Ingredient\.of|this\.tag)\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		if match.group(1) == 'SMELTS_TO_GLASS':
 			add_recipe(recipes, match.group(2), {
@@ -497,7 +497,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Ore smelting recipes
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.oreSmelting\((?:consumer|recipeOutput), ([\w_]+), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.oreSmelting\((?:(?:consumer|recipeOutput), )?([\w_]+), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -509,7 +509,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Stonecutting recipes
-	match = re.match(rf'{line_prefix}SingleItemRecipeBuilder\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:SingleItemRecipeBuilder|this)\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}(?:, (\d+))?\)', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': match.group(3) or 1,
@@ -521,7 +521,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Netherite smithing recipes
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(?:legacyN|n)etheriteSmithing\((?:consumer|recipeOutput), {one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(?:legacyN|n)etheriteSmithing\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -534,7 +534,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.colorBlockWithDye\((?:consumer|recipeOutput), list, list\d, "(\w+)"\)', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.colorBlockWithDye\((?:(?:consumer|recipeOutput), )?list, list\d, "(\w+)"\)', line)
 	if match:
 		item = match.group(1).upper()
 		if simplest_only and item != 'WOOL':
@@ -552,8 +552,23 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			})
 		return
 
-	# Recoloring Shulker Boxes
-	match = re.match(rf'{line_prefix}SpecialRecipeBuilder\.special\((RecipeSerializer\.SHULKER_BOX_COLORING|ShulkerBoxColoring::new)\)', line)
+	# Recoloring Shulker Boxes and Bundles (1.21.2 and up) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.21.2)
+	match = re.match(rf'{line_prefix}TransmuteRecipeBuilder\.transmute\((?:RecipeCategory\.[\w_]+, )?ingredient, (?:Ingredient\.of\(\(ItemLike\)(?:DyeItem\.byColor\(dyeColor\)|dyeItem)\)), (\w+)(Block|Item)', line)
+	if match:
+		ingredient = re.sub(r'([a-z])([A-Z])', r'\1_\2', match.group(1)).upper()
+		for color in dye_colors:
+			add_recipe(recipes, f'{color}_{ingredient}', {
+				'count': 1,
+				'ingredients': {
+					ingredient: 1,
+					f'{color}_DYE': 1
+				},
+				'pattern': None
+			})
+		return
+
+	# Recoloring Shulker Boxes (1.21.1 and earlier) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.21.1)
+	match = re.match(rf'{line_prefix}(?:SpecialRecipeBuilder|this)\.special\((RecipeSerializer\.SHULKER_BOX_COLORING|ShulkerBoxColoring::new)\)', line)
 	if match:
 		for color in dye_colors:
 			add_recipe(recipes, f'{color}_SHULKER_BOX', {
@@ -566,26 +581,26 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			})
 		return
 
-		# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-		match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.copySmithingTemplate\((?:consumer|recipeOutput), \(ItemLike\){one_ingredient_regex}, {one_ingredient_regex}\);', line)
-		if match:
-			add_recipe(recipes, match.group(2), {
-				'count': 2,
-				'ingredients': {
-					match.group(2): 1,
-					match.group(3): 1,
-					'DIAMOND': 7,
-				},
-				'pattern': [
-					['DIAMOND', match.group(2), 'DIAMOND'],
-					['DIAMOND', match.group(3), 'DIAMOND'],
-					['DIAMOND', 'DIAMOND', 'DIAMOND'],
-				]
-			})
-			return
+	# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.copySmithingTemplate\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, {ingredient_regex}\);', line)
+	if match:
+		add_recipe(recipes, match.group(2), {
+			'count': 2,
+			'ingredients': {
+				match.group(2): 1,
+				match.group(3): 1,
+				'DIAMOND': 7,
+			},
+			'pattern': [
+				['DIAMOND', match.group(2), 'DIAMOND'],
+				['DIAMOND', match.group(3), 'DIAMOND'],
+				['DIAMOND', 'DIAMOND', 'DIAMOND'],
+			]
+		})
+		return
 
 	# One-to-one conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.oneToOneConversionRecipe\((?:consumer|recipeOutput), {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (?P<count>\d+))?', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.oneToOneConversionRecipe\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (?P<count>\d+))?', line)
 	if match:
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.groupdict().get('count') or 1),
@@ -597,7 +612,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# 2x2/3x3 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(twoByTwo|threeByThree)Packer\((?:consumer|recipeOutput)(?:, RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(twoByTwo|threeByThree)Packer\((?:(?:consumer|recipeOutput), )?(?:RecipeCategory\.[\w_]+)?, {one_ingredient_regex}, {one_ingredient_regex}(?:, "[\w_]+")?(?:, (\d+))?\);', line)
 	if match:
 		if match.group(1) == 'twoByTwo':
 			add_recipe(recipes, match.group(2), {
@@ -621,7 +636,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# 9x9 packer conversion -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.nineBlockStorageRecipes(?:(?:Recipes)?WithCustom(?:Packing|Unpacking))?\((?:consumer|recipeOutput), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.nineBlockStorageRecipes(?:(?:Recipes)?WithCustom(?:Packing|Unpacking))?\((?:(?:consumer|recipeOutput), )?(?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
 	if match:
 		is_nugget = match.group(1).endswith("_NUGGET")
 		# 1 block to 9 items
@@ -645,7 +660,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:Vanilla)?RecipeProvider\.(\w+)\((?:(?:consumer|recipeOutput), )?(?:(?:RecipeCategory\.[\w_]+, )?)?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(\w+)\((?:(?:(?:consumer|recipeOutput), )?)?(?:(?:RecipeCategory\.[\w_]+, )?)?{ingredient_regex}, {ingredient_regex}(?:, (\d+))?', line)
 	if match:
 		match_type = match.group(1)
 
@@ -683,7 +698,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 	# Get recipes for cooked food
 	with open(Path(f"{source_path}/data/recipes/RecipeProvider.java")) as dcj:
 		for line in dcj.readlines():
-			match = re.match(rf'^\s+RecipeProvider\.simpleCookingRecipe\((?:consumer|recipeOutput), string, recipeSerializer, n, {one_ingredient_regex}, {one_ingredient_regex}\);', line)
+			match = re.match(rf'^\s+(?:RecipeProvider|this)\.simpleCookingRecipe\((?:(?:consumer|recipeOutput), )?string, recipeSerializer, n, {one_ingredient_regex}, {one_ingredient_regex}\);', line)
 			if match:
 				add_recipe(recipes, match.group(2), {
 					'count': 1,
