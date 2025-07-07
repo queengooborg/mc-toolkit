@@ -5,7 +5,7 @@ This toolkit is designed to perform two main tasks:
 - Decompiles, deobfuscates and scans the Minecraft source code to generate a list of items and their associated recipes
 - Using the generated item data, create an EssentialsX `worth.yml` and a BossShopPro + BS-ItemShops set of shops
 
-Developed and tested for ~~1.13~~ 1.14.4 through 1.21.
+Developed and tested for ~~1.13~~ 1.14.4 through 1.21.1.
 
 *Need a worth.yml with all the new items?  Check out my fork of [X00LA's file](https://github.com/X00LA/Bukkit-Essentials-worth.yml)!  https://gist.github.com/queengooborg/92d08120f0d6d25175f6c7a30e3ccac7*
 
