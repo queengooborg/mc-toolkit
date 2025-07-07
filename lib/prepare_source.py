@@ -19,8 +19,8 @@ sys.path.insert(0, Path(__file__).parent.parent)
 from DecompilerMC.main import run as do_decompile
 
 def main(mc_version, silent=False):
-	decompiler_path = Path(os.path.dirname(__file__)) / "../DecompilerMC"
-	source_path = decompiler_path / f"src/{mc_version}/client/net/minecraft"
+	decompiler_path = Path(os.path.dirname(__file__)) / ".." / "DecompilerMC"
+	source_path = decompiler_path / "src" / mc_version / "client" / "net" / "minecraft"
 
 	if mc_version <= Version("1.14.3"):
 		raise Exception("DecompilerMC cannot decompile Minecraft 1.14.3 or lower, as no source mappings are provided")
