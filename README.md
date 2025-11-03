@@ -1,4 +1,10 @@
 # queengooborg's Minecraft Toolkit
+
+> [!NOTE]
+> If you enjoy this project and want to help with its maintenance, please consider supporting me via Ko-Fi!
+>
+> <a href='https://ko-fi.com/queengooborg' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi4.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 A Python toolkit to scan Minecraft source code and generate helper files for server owners and developers.
 
 This toolkit is designed to perform two main tasks:
