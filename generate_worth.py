@@ -45,7 +45,9 @@ def remap_ingredient(item_id):
 		'GOLD_TOOL_MATERIALS': 'GOLD_INGOT',
 		'DIAMOND_TOOL_MATERIALS': 'DIAMOND',
 		'EGGS': 'EGG',
-		'LEAVES': 'OAK_LEAVES'
+		'LEAVES': 'OAK_LEAVES',
+		'COPPER_TOOL_MATERIALS': 'COPPER_INGOT',
+		'CHAIN': 'IRON_CHAIN'
 	}
 
 	if item_id in remappings:
@@ -112,8 +114,8 @@ def calculate_worth(worth, items):
 			continue
 
 		# Oxidized copper blocks and doors
-		elif item.startswith(("EXPOSED_COPPER", "WEATHERED_COPPER", "OXIDIZED_COPPER")):
-			base_copper_item = "CUT_COPPER" if not "door" in item else ("COPPER_" + item.split("_COPPER_")[1])
+		elif item.startswith(("EXPOSED_", "WEATHERED_", "OXIDIZED_")):
+			base_copper_item = "CUT_COPPER" if not "DOOR" in item else "LIGHTNING_ROD" if "LIGHTNING" in item else ("COPPER_" + item.split("_COPPER_")[1])
 			if not base_copper_item in worth:
 				continue # Need to wait for calculation
 			add_to_worth(worth, item, worth[base_copper_item] *

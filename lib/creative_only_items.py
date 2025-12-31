@@ -126,4 +126,5 @@ creative_only_items = [
 	"VAULT",
 	"TEST_BLOCK",
 	"TEST_INSTANCE_BLOCK",
+	"COPPER_GOLEM_SPAWN_EGG"
 ]
