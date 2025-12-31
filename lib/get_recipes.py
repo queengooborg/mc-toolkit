@@ -453,6 +453,17 @@ def simple_func(func_type, match):
 				[cost, cost, cost]
 			]
 		}
+	if func_type == 'waxedChiseled':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 1,
+				'HONEYCOMB': 1
+			},
+			'pattern': [
+				[cost, 'HONEYCOMB']
+			]
+		}
 	
 	raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
 
