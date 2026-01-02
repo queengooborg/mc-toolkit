@@ -26,6 +26,9 @@ output_dir = script_dir / "output"
 base_worth = yaml.load(open(script_dir / "base_worth.yml", 'r'), Loader=Loader)
 worth_header = open(script_dir / "worth_yml_header.yml", "r").read()
 
+with open(script_dir / "latest.txt", 'r') as f:
+	latest_compatible = Version(f.read())
+
 def remap_ingredient(item_id):
 	remappings = {
 		'PLANKS': 'OAK_PLANKS',
@@ -162,6 +165,9 @@ def remap_names_for_essentials(worth):
 	return new_worth
 
 def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml", essentials=True):
+	if latest_compatible < mc_version:
+		print(f"Warning, script may fail; script is written for MC {latest_compatible} or earlier but MC {mc_version} was requested")
+
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)['items']
 	worth = base_worth
@@ -186,7 +192,7 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml",
 		worth = remap_names_for_essentials(worth)
 
 	with open(outpath, 'w') as worthfile:
-		worthfile.write(worth_header + "\n\n")
+		worthfile.write(worth_header.replace("<-latest->", str(mc_version)) + "\n\n")
 		worthfile.write(yaml.dump({'worth': worth}, Dumper=Dumper))
 
 if __name__ == '__main__':
