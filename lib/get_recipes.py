@@ -488,7 +488,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shaped recipes
-	match = re.match(rf'{line_prefix}(?:ShapedRecipeBuilder|this)\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:ShapedRecipeBuilder|this)\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:\.unaffected\(\))?(?:, (\d+))?\)', line)
 	if match:
 		item = match.group(1)
 		ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}

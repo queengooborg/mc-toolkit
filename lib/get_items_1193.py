@@ -24,17 +24,19 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
-			match = re.search(rf"public static final Item (\w+) = ", line)
+			match = re.search(rf"public static final (Item|WeatheringCopperItems) (\w+) = ", line)
 			if match:
-				item = match.group(1)
+				item = match.group(2)
 				item = item_substitutions.get(item, item) # Fix any typos present in source code
 
 				if not include_creative and item in creative_only_items:
 					continue
 
-				recipe = recipes.get(item)
+				items[item] = recipes.get(item)
 
-				items[item] = recipe
+				if match.group(1) == "WeatheringCopperItems":
+					for mod in ["EXPOSED_", "WEATHERED_", "OXIDIZED_", "WAXED_", "WAXED_EXPOSED_", "WAXED_WEATHERED_", "WAXED_OXIDIZED_"]:
+						items[mod + item] = recipes.get(mod + item)
 
 				if item == "WRITABLE_BOOK":
 					items["WRITTEN_BOOK"] = None
@@ -72,8 +74,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 					item = potionmatch.group(1)
 
 			if item:
-				if item == "CUT_STANDSTONE_SLAB":
-					item = "CUT_SANDSTONE_SLAB" # Fix typo present in source code
+				item = item_substitutions.get(item, item) # Fix any typos present in source code
 				recipe = recipes.get(item)
 
 				if not include_creative and item in creative_only_items:

@@ -126,6 +126,13 @@ def calculate_worth(worth, items):
 			)
 			continue
 
+		# Waxed copper
+		elif item.startswith("WAXED_"):
+			base_item = item.replace("WAXED_", "")
+			if not base_item in worth:
+				continue # Need to wait for calculation
+			add_to_worth(worth, item, (worth[base_item] + worth["HONEYCOMB"]) * 0.9)
+
 		# Damaged anvils (CHIPPED_ANVIL, DAMAGED_ANVIL)
 		elif item.endswith("_ANVIL"):
 			if not 'ANVIL' in worth:
