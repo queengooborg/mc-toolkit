@@ -194,6 +194,17 @@ def create_variant_recipe(variant, cost):
 				[cost, cost, cost]
 			]
 		}
+	if variant in ['bricks', 'tiles']:
+		return {
+			'count': 4,
+			'ingredients': {
+				cost: 4
+			},
+			'pattern': [
+				[cost, cost],
+				[cost, cost]
+			]
+		}
 	
 	raise Exception(f'Unhandled type "{variant}" detected for variant!')
 
@@ -505,7 +516,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Smelting recipes
-	match = re.match(rf'{line_prefix}(?:SimpleCookingRecipeBuilder|this)\.smelting\((?:Ingredient\.of|this\.tag)\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:SimpleCookingRecipeBuilder|this)\.smelting\((?:Ingredient\.of|this\.tag)\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?(?:CookingBookCategory\.\w+, )?{one_ingredient_regex}', line)
 	if match:
 		if match.group(1) == 'SMELTS_TO_GLASS':
 			add_recipe(recipes, match.group(2), {
@@ -533,7 +544,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Ore smelting recipes
-	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.oreSmelting\((?:(?:consumer|recipeOutput), )?([\w_]+), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.oreSmelting\((?:(?:consumer|recipeOutput), )?([\w_]+), (?:RecipeCategory\.[\w_]+, )?(?:CookingBookCategory\.\w+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -545,7 +556,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Stonecutting recipes
-	match = re.match(rf'{line_prefix}(?:SingleItemRecipeBuilder|this)\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:SingleItemRecipeBuilder|this)\.stonecutting\(Ingredient\.of\({one_ingredient_regex}\), (?:RecipeCategory\.[\w_]+, )?(?:CookingBookCategory\.\w+, )?{one_ingredient_regex}(?:, (\d+))?\)', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': match.group(3) or 1,
@@ -557,7 +568,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Netherite smithing recipes
-	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(?:legacyN|n)etheriteSmithing\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(?:legacyN|n)etheriteSmithing\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )(?:CookingBookCategory\.\w+, )??{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -569,8 +580,27 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		})
 		return
 
-	# Recoloring wool, bed and carpet -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
+	# Recoloring wool, bed and carpet (1.20.2 to 1.21.11) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
 	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.color(?:Block|Item)WithDye\((?:(?:consumer|recipeOutput), )?list, list\d, "(\w+)"(?:, RecipeCategory\.[\w_]+)?\)', line)
+	if match:
+		item = match.group(1).upper()
+		if simplest_only and item != 'WOOL':
+			return # Beds and carpets can be crafted directly with colored wool
+		for color in dye_colors:
+			if simplest_only and item == 'WOOL' and color == 'WHITE':
+				continue # White wool can be crafted directly with string
+			add_recipe(recipes, f'{color}_{item}', {
+				'count': 1,
+				'ingredients': {
+					item: 1,
+					f'{color}_DYE': 1
+				},
+				'pattern': None
+			})
+		return
+
+	# Recoloring wool, bed and carpet (1.20.2 to 1.21.11) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.colorItemWithDye\((?:(?:consumer|recipeOutput), )?dyes, (\w+)s, "(?:\w+)"(?:, RecipeCategory\.[\w_]+)?\)', line)
 	if match:
 		item = match.group(1).upper()
 		if simplest_only and item != 'WOOL':
@@ -728,6 +758,18 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 				},
 				'pattern': 'axe'
 			})
+		if match_type in ['dyedShulkerBoxRecipe', 'dyedBundleRecipe']:
+			color = match.group(2).replace("_DYE", "")
+			base_item = match.group(5).replace(color+"_", "")
+			add_recipe(recipes, match.group(5), {
+				'count': 1,
+				'ingredients': {
+					base_item: 1,
+					match.group(2): 1
+				},
+				'pattern': None
+			})
+			return
 
 		add_recipe(recipes, match.group(2), simple_func(match_type, match))
 		return
@@ -788,8 +830,10 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 					sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
 					for s in sets:
 						variant = s.group(1)
-						if variant == 'mosaic':
-							continue # Bamboo Mosaic recipe is defined elsewhere
+						if variant in ['mosaic', 'cobbled']:
+							# Bamboo Mosaic recipe is defined elsewhere
+							#
+							continue
 						add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 
 	if mc_version >= Version("1.19.3"):
