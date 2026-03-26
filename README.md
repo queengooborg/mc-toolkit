@@ -19,7 +19,7 @@ Developed and tested for ~~1.13~~ 1.14.4 through 1.21.11.  (NOT yet ready for 26
  - Java 8+
  - Python 3.7+
  - PyYAML (`pip install pyyaml`)
- - [`DecompilerMC`](https://github.com/hube12/DecompilerMC) (added as a submodule)
+ - [`DecompilerMC`](https://github.com/queengooborg/DecompilerMC) (added as a submodule)
 
 ## generate_items.py
 
