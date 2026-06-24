@@ -12,28 +12,35 @@ import os, re, json
 from pathlib import Path
 
 from .version import Version
+from .get_dye_colors import get_dye_colors
 
 line_prefix = r"^\s*(?:\(\((?:Shaped|Shapeless)RecipeBuilder\))*"
-one_ingredient_regex = r"(?:\(ItemLike\))?(?:Blocks|Items|ItemTags)\.([\w_]+)(?:\.asItem\(\))?"
+one_ingredient_regex = r"(?:\(ItemLike\))?(?:Blocks|Items|ItemTags)\.([\w_]+(?:\.\w+\(\))?)(?:\.asItem\(\))?"
 ingredient_regex = rf"(?:{one_ingredient_regex}|Ingredient\.of\({one_ingredient_regex}(?:, {one_ingredient_regex})*\))"
 
 def format_item_name(name):
 	if type(name) == str:
+		if '.' in name:
+			parts = name.split('.')
+			if parts[1] == 'weathering()':
+				return parts[0]
+			return f"{re.sub(r"([A-Z])", "_\\1", parts[1]).upper().replace("()", "")}_{parts[0]}"
 		return name
-	return "/".join(filter(lambda n: n != None, name))
+	return "/".join([format_item_name(n) for n in name if n != None])
 
 # Add a new recipe to the recipes list for the item
 def add_recipe(recipes, key, new_recipe):
+	key = format_item_name(key)
 	if key in recipes:
 		if type(recipes[key]) == list:
 			if new_recipe in recipes[key]:
+				# print(f'Warning: multiple recipes detected for {key}!')
 				return # Ignore duplicates
-			# print(f'Warning: multiple recipes detected for {key}!')
 			recipes[key].append(new_recipe)
 		else:
 			if new_recipe == recipes[key]:
+				# print(f'Warning: multiple recipes detected for {key}!')
 				return # Ignore duplicates
-			# print(f'Warning: multiple recipes detected for {key}!')
 			recipes[key] = [recipes[key], new_recipe]
 	else:
 		recipes[key] = new_recipe
@@ -163,6 +170,19 @@ def create_variant_recipe(variant, cost):
 				['', 'STICK', '']
 			]
 		}
+	if variant in ['hangingSign', 'customHangingSign']:
+		return {
+			'count': 6,
+			'ingredients': {
+				cost: 6,
+				'CHAIN': 2,
+			},
+			'pattern': [
+				['CHAIN', '', 'CHAIN'],
+				[cost, cost, cost],
+				[cost, cost, cost]
+			]
+		}
 	if variant == 'slab':
 		return {
 			'count': 6,
@@ -170,6 +190,14 @@ def create_variant_recipe(variant, cost):
 				cost: 3,
 			},
 			'pattern': [[cost, cost, cost]]
+		}
+	if variant == 'pillar':
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 2
+			},
+			'pattern': [[cost], [cost]]
 		}
 	if variant == 'stairs':
 		return {
@@ -205,14 +233,19 @@ def create_variant_recipe(variant, cost):
 				[cost, cost]
 			]
 		}
-	
+	if variant == "strippedLog":
+		return {
+			'count': 1,
+			'ingredients': {
+				cost: 1
+			},
+			'pattern': 'axe'
+		}
+
 	raise Exception(f'Unhandled type "{variant}" detected for variant!')
 
 # Simple recipe functions -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
-def simple_func(func_type, match):
-	cost = match.group(5) or match.group(6)
-	count = int(match.group(8) or 1)
-
+def simple_func(func_type, cost, count=1):
 	if func_type == 'woodenButton':
 		return create_variant_recipe('button', cost)
 	if func_type == 'banner':
@@ -314,18 +347,7 @@ def simple_func(func_type, match):
 	if func_type == 'woodenSign':
 		return create_variant_recipe('sign', cost)
 	if func_type == 'hangingSign':
-		return {
-			'count': 6,
-			'ingredients': {
-				cost: 6,
-				'CHAIN': 2,
-			},
-			'pattern': [
-				['CHAIN', '', 'CHAIN'],
-				[cost, cost, cost],
-				[cost, cost, cost]
-			]
-		}
+		return create_variant_recipe('hangingSign', cost)
 	if func_type == 'mosaicBuilder':
 		return create_variant_recipe('mosaic', cost)
 	if func_type in ['planksFromLog', 'planksFromLogs']:
@@ -476,7 +498,7 @@ def simple_func(func_type, match):
 			]
 		}
 	
-	raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!\n{match.group(0)}')
+	raise Exception(f'Unhandled type "{func_type}" detected for simple recipe function!')
 
 def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltables):
 	# Ignore blasting recipes; all are duplicates of smelting (as of 1.20.2)
@@ -484,7 +506,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shapeless recipes
-	match = re.match(rf'{line_prefix}(?:ShapelessRecipeBuilder|this)\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:ShapelessRecipeBuilder|this)\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+(?:\.\w+\(\))?)(?:, (\d+))?\)', line)
 	if match:
 		if simplest_only and match.group(1) == 'DRIED_KELP':
 			return
@@ -499,7 +521,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Shaped recipes
-	match = re.match(rf'{line_prefix}(?:ShapedRecipeBuilder|this)\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+)(?:\.unaffected\(\))?(?:, (\d+))?\)', line)
+	match = re.match(rf'{line_prefix}(?:ShapedRecipeBuilder|this)\.shaped\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+(?:\.\w+\(\))?)(?:\.unaffected\(\))?(?:, (\d+))?\)', line)
 	if match:
 		item = match.group(1)
 		ingredients = {i.group(1): format_item_name(i.group(2) or i.groups()[2:]) for i in re.finditer(rf"\.define\(Character\.valueOf\('(.)'\), {ingredient_regex}\)", line)}
@@ -599,10 +621,10 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			})
 		return
 
-	# Recoloring wool, bed and carpet (1.20.2 to 1.21.11) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
-	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.colorItemWithDye\((?:(?:consumer|recipeOutput), )?dyes, (\w+)s, "(?:\w+)"(?:, RecipeCategory\.[\w_]+)?\)', line)
+	# Recoloring wool, bed and carpet (26.1 and up) -- see net.minecraft.data.recipes.VanillaRecipeProvider (1.20.2)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.colorItemWithDye\((?:(?:consumer|recipeOutput), )?dyes, (?:Items.(\w+).asList\(\)|(\w+)s), "(?:\w+)"(?:, RecipeCategory\.[\w_]+)?\)', line)
 	if match:
-		item = match.group(1).upper()
+		item = match.group(1) or match.group(2).upper()
 		if simplest_only and item != 'WOOL':
 			return # Beds and carpets can be crafted directly with colored wool
 		for color in dye_colors:
@@ -644,6 +666,36 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 					f'{color}_DYE': 1
 				},
 				'pattern': None
+			})
+		return
+
+	# Dyed blocks/items (26.2 and up) -- see net.minecraft.world.level.block.ColorCollection (26.2)
+	match = re.match(rf'{line_prefix}ColorCollection\.zipApply\({one_ingredient_regex}, {one_ingredient_regex}, \(x\$0, x\$1\) -> vanillaRecipeProvider\.(\w+)', line)
+	if match:
+		for color in dye_colors:
+			if match.group(3) in ['dyedShulkerBoxRecipe', 'dyedBundleRecipe']:
+				add_recipe(recipes, f'{color}_{match.group(2)}', {
+					'count': 1,
+					'ingredients': {
+						match.group(2).replace("DYED_", ""): 1,
+						f'{color}_{match.group(1)}': 1
+					},
+					'pattern': None
+				})
+			else:
+				add_recipe(recipes, f'{color}_{match.group(1)}', simple_func(match.group(3), f'{color}_{match.group(2)}', 1))
+		return
+
+	# Glazed terracotta (26.2 and up) -- see net.minecraft.data.recipes.VanillaRecipeProvider (26.2)
+	match = re.match(rf'{line_prefix}DyeColor\.VALUES\.forEach\(dyeColor -> (?:SimpleCookingRecipeBuilder|this)\.smelting\((?:Ingredient\.of|this\.tag)\({one_ingredient_regex}\.pick\(\(DyeColor\)dyeColor\)\), (?:RecipeCategory\.[\w_]+, )?(?:CookingBookCategory\.\w+, )?{one_ingredient_regex}', line)
+	if match:
+		for color in dye_colors:
+			add_recipe(recipes, f'{color}_{match.group(2)}', {
+				'count': 1,
+				'ingredients': {
+					f'{color}_{match.group(1)}': 1
+				},
+				'pattern': 'furnace'
 			})
 		return
 
@@ -750,7 +802,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		if match_type == 'stainedGlassPaneFromGlassPaneAndDye' and simplest_only:
 			return # Only use "stainedGlassPaneFromStainedGlass"
 		if match_type.startswith('planksFromLog'):
-			# Add "recipes" for stripped logs
+			# Add "recipes" for stripped logs (prior to MC 26.2)
 			add_recipe(recipes, f"STRIPPED_{match.group(5).replace('LOGS', 'LOG').replace('BLOCKS', 'BLOCK').replace('STEMS', 'STEM')}", {
 				'count': 1,
 				'ingredients': {
@@ -771,24 +823,18 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 			})
 			return
 
-		add_recipe(recipes, match.group(2), simple_func(match_type, match))
+		cost = match.group(5) or match.group(6)
+		count = int(match.group(8) or 1)
+
+		add_recipe(recipes, match.group(2), simple_func(match_type, cost, count))
 		return
 
 # Get item recipes
 def get_recipes(source_path, mc_version, simplest_only=True):
 	recipes = {}
-
-	dye_colors = []
 	smeltables = {}
 
-	# Get all dye colors
-	with open(Path(f"{source_path}/world/item/DyeColor.java")) as dcj:
-		for line in dcj.readlines():
-			# match = re.match(r'^\s+public static final /\* enum \*/ DyeColor ([\w_]+) = new DyeColor\(', line)
-			match = re.match(r'^\s+(\w+)\(\d+, "\w+", ', line)
-			if match:
-				dye_colors.append(match.group(1))
-				continue
+	dye_colors = get_dye_colors(source_path)
 
 	# Get recipes for cooked food
 	with open(Path(f"{source_path}/data/recipes/RecipeProvider.java")) as dcj:
@@ -830,9 +876,20 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 					sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
 					for s in sets:
 						variant = s.group(1)
-						if variant in ['mosaic', 'cobbled']:
+						if variant in ['mosaic', 'log']:
 							# Bamboo Mosaic recipe is defined elsewhere
-							#
+							# Since MC 26.2, logs are added as a variant to the block family
+							continue
+						if variant == 'cobbled':
+							# Before MC 26.2, cobbled block smelting recipes were separately defined
+							if mc_version >= Version("26.2"):
+								add_recipe(recipes, match.group(1), {
+									'count': 1,
+									'ingredients': {
+										s.group(2): 1
+									},
+									'pattern': 'furnace'
+								})
 							continue
 						add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
 

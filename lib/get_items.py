@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .creative_only_items import creative_only_items
 from .get_recipes import get_recipes
+from .get_dye_colors import get_dye_colors
 from .item_substitutions import item_substitutions
 from .version import Version
 
@@ -24,15 +25,22 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 	categories = {}
 	recipes = get_recipes(source_path, mc_version, simplest_only=not all_recipes)
 
+	dye_colors = get_dye_colors(source_path)
+
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
-			match = re.search(rf"public static final (Item|WeatheringCopperItems) (\w+) = ", line)
+			match = re.search(rf"public static final (Item|WeatheringCopperItems|ColorCollection<Item>) (\w+) = ", line)
 			if match:
 				item = match.group(2)
 				item = item_substitutions.get(item, item) # Fix any typos present in source code
 
 				if not include_creative and item in creative_only_items:
+					continue
+
+				if match.group(1) == "ColorCollection<Item>":
+					for c in dye_colors:
+						items[c + "_" + item] = recipes.get(c + "_" + item)
 					continue
 
 				items[item] = recipes.get(item)
