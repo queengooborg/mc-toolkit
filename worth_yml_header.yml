@@ -22,6 +22,10 @@
 
 #
 # Changelog:
+#   26.3:
+#     Add items introduced in 26.3
+#     Properly restore copper based items
+#
 #   26.2 (Update 2):
 #     Restore copper based items
 #
