@@ -511,11 +511,15 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		if simplest_only and match.group(1) == 'DRIED_KELP':
 			return
 
+		ingredients = {}
+		for ingredient_match in re.finditer(rf'\.requires\({ingredient_regex}(?:, (?P<count>\d+))?\)', line):
+			ingredient = format_item_name(ingredient_match.group(1) or ingredient_match.groups()[1:-1])
+			count = int(ingredient_match.groupdict().get('count') or 1)
+			ingredients[ingredient] = ingredients.get(ingredient, 0) + count
+
 		add_recipe(recipes, match.group(1), {
 			'count': int(match.group(2) or 1),
-			'ingredients': {
-				format_item_name(i.group(1) or i.groups()[1:-1]): int(i.groupdict().get('count') or 1) for i in re.finditer(rf'\.requires\({ingredient_regex}(?:, (?P<count>\d+))?\)', line)
-			},
+			'ingredients': ingredients,
 			'pattern': None
 		})
 		return
@@ -673,7 +677,17 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	match = re.match(rf'{line_prefix}ColorCollection\.zipApply\({one_ingredient_regex}, {one_ingredient_regex}, \(x\$0, x\$1\) -> vanillaRecipeProvider\.(\w+)', line)
 	if match:
 		for color in dye_colors:
-			if match.group(3) in ['dyedShulkerBoxRecipe', 'dyedBundleRecipe']:
+			if match.group(3) == 'cushionRecipe':
+				item = f'{color}_{match.group(2)}'
+				ingredient = f'{color}_{match.group(1)}'
+				add_recipe(recipes, item, {
+					'count': 1,
+					'ingredients': {
+						ingredient: 3
+					},
+					'pattern': [[ingredient, ingredient, ingredient]]
+				})
+			elif match.group(3) in ['dyedShulkerBoxRecipe', 'dyedBundleRecipe']:
 				add_recipe(recipes, f'{color}_{match.group(2)}', {
 					'count': 1,
 					'ingredients': {
@@ -892,6 +906,17 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 								})
 							continue
 						add_recipe(recipes, s.group(2), create_variant_recipe(variant, match.group(1)))
+
+				color_family_match = re.match(r'^\s+public static final ColorCollection<BlockFamily> \w+ = ColorCollection\.VALUES\.map\(color -> BlockFamilies\.familyBuilder\(Blocks\.(\w+)\.pick\(\(DyeColor\)color\)\)(.*)\.getFamily\(\)\);\s*$', line)
+				if color_family_match:
+					for variant_match in re.finditer(r'\.(\w+)\(Blocks\.(\w+)\.pick\(\(DyeColor\)color\)\)', color_family_match.group(2)):
+						variant = variant_match.group(1)
+						for color in dye_colors:
+							add_recipe(
+								recipes,
+								f'{color}_{variant_match.group(2)}',
+								create_variant_recipe(variant, f'{color}_{color_family_match.group(1)}')
+							)
 
 	if mc_version >= Version("1.19.3"):
 		recipes_path = Path(f"{source_path}/data/recipes/packs/VanillaRecipeProvider.java")

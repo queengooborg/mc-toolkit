@@ -50,7 +50,8 @@ def remap_ingredient(item_id):
 		'EGGS': 'EGG',
 		'LEAVES': 'OAK_LEAVES',
 		'COPPER_TOOL_MATERIALS': 'COPPER_INGOT',
-		'CHAIN': 'IRON_CHAIN'
+		'CHAIN': 'IRON_CHAIN',
+		'MUSHROOMS': 'BROWN_MUSHROOM'
 	}
 
 	if item_id in remappings:
