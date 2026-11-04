@@ -505,6 +505,65 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	if 'SimpleCookingRecipeBuilder.blasting(' in line or 'VanillaRecipeProvider.oreBlasting(' in line:
 		return
 
+	# Weathering copper collection recipes (26.2 and up)
+	match = re.match(r'^\s*WeatheringCopperCollection\.zipApply\(Blocks\.(\w+), Blocks\.(\w+), .*?-> .*?\.(stonecutterResultFromBase|grate|copperBulb)\(', line)
+	if match:
+		output_item, ingredient_item, recipe_type = match.groups()
+		if recipe_type == 'stonecutterResultFromBase':
+			count = int(re.search(r', (\d+)\)\);$', line).group(1))
+		else:
+			count = 1
+
+		for prefix in ['', 'EXPOSED_', 'WEATHERED_', 'OXIDIZED_', 'WAXED_', 'WAXED_EXPOSED_', 'WAXED_WEATHERED_', 'WAXED_OXIDIZED_']:
+			output = f'{prefix}{output_item}'
+			ingredient = f'{prefix}{ingredient_item}'
+			if recipe_type == 'stonecutterResultFromBase':
+				recipe = {
+					'count': count,
+					'ingredients': {ingredient: 1},
+					'pattern': 'stonecutter'
+				}
+			else:
+				recipe = simple_func(recipe_type, ingredient)
+			add_recipe(recipes, output, recipe)
+		return
+
+	# Stonecutting recipes generated from weathering copper block families
+	match = re.match(r'^\s*this\.stonecutterResultFromBase\(RecipeCategory\.\w+, Blocks\.(\w+)\.(weathering|waxed)\(\)\.pick\(\(WeatheringCopper\.WeatherState\)state\), Blocks\.(\w+)\.(weathering|waxed)\(\)\.pick\(\(WeatheringCopper\.WeatherState\)state\), (\d+)\);', line)
+	if match:
+		output_item, output_type, ingredient_item, ingredient_type, count = match.groups()
+		prefixes = ['', 'EXPOSED_', 'WEATHERED_', 'OXIDIZED_'] if output_type == 'weathering' else [
+			'WAXED_', 'WAXED_EXPOSED_', 'WAXED_WEATHERED_', 'WAXED_OXIDIZED_'
+		]
+		ingredient_prefixes = ['', 'EXPOSED_', 'WEATHERED_', 'OXIDIZED_'] if ingredient_type == 'weathering' else [
+			'WAXED_', 'WAXED_EXPOSED_', 'WAXED_WEATHERED_', 'WAXED_OXIDIZED_'
+		]
+		for output_prefix, ingredient_prefix in zip(prefixes, ingredient_prefixes):
+			add_recipe(recipes, f'{output_prefix}{output_item}', {
+				'count': int(count),
+				'ingredients': {f'{ingredient_prefix}{ingredient_item}': 1},
+				'pattern': 'stonecutter'
+			})
+		return
+
+	# Copper door and trapdoor recipes (26.2 and up)
+	match = re.match(r'^\s*this\.doorBuilder\(Blocks\.(\w+)\.weathering\(\)\.unaffected\(\), Ingredient\.of\(\(ItemLike\)Items\.(\w+)\)\)', line)
+	if match:
+		add_recipe(recipes, match.group(1), create_variant_recipe('door', match.group(2)))
+		return
+
+	match = re.match(r'^\s*this\.twoByTwoPacker\(RecipeCategory\.\w+, Blocks\.(\w+)\.weathering\(\)\.unaffected\(\), Items\.(\w+)\)', line)
+	if match:
+		add_recipe(recipes, match.group(1), {
+			'count': 1,
+			'ingredients': {match.group(2): 4},
+			'pattern': [
+				[match.group(2), match.group(2)],
+				[match.group(2), match.group(2)]
+			]
+		})
+		return
+
 	# Shapeless recipes
 	match = re.match(rf'{line_prefix}(?:ShapelessRecipeBuilder|this)\.shapeless\((?:RecipeCategory\.[\w_]+, )?(?:Blocks|Items)\.([\w_]+(?:\.\w+\(\))?)(?:, (\d+))?\)', line)
 	if match:
