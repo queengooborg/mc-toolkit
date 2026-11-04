@@ -27,10 +27,12 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 	dye_colors = get_dye_colors(source_path)
 
+	weathering_copper_modifiers = ["", "EXPOSED_", "WEATHERED_", "OXIDIZED_", "WAXED_", "WAXED_EXPOSED_", "WAXED_WEATHERED_", "WAXED_OXIDIZED_"]
+	weathering_copper_items = set()
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:
 		for line in ij.readlines():
-			match = re.search(rf"public static final (Item|WeatheringCopperItems|ColorCollection<Item>) (\w+) = ", line)
+			match = re.search(rf"public static final (Item|WeatheringCopperItems|WeatheringCopperCollection<Item>|ColorCollection<Item>) (\w+) = ", line)
 			if match:
 				item = match.group(2)
 				item = item_substitutions.get(item, item) # Fix any typos present in source code
@@ -45,8 +47,9 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 				items[item] = recipes.get(item)
 
-				if match.group(1) == "WeatheringCopperItems":
-					for mod in ["EXPOSED_", "WEATHERED_", "OXIDIZED_", "WAXED_", "WAXED_EXPOSED_", "WAXED_WEATHERED_", "WAXED_OXIDIZED_"]:
+				if match.group(1) in ["WeatheringCopperItems", "WeatheringCopperCollection<Item>"]:
+					weathering_copper_items.add(item)
+					for mod in weathering_copper_modifiers[1:]:
 						items[mod + item] = recipes.get(mod + item)
 
 				if item == "WRITABLE_BOOK":
@@ -91,6 +94,15 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 				if not include_creative and item in creative_only_items:
 					continue
 
+				category_items = [item]
+			else:
+				collectionmatch = re.search(r"Items\.([\w_]+)\.forEach\(\w+::accept\);", line)
+				if collectionmatch and collectionmatch.group(1) in weathering_copper_items:
+					category_items = [mod + collectionmatch.group(1) for mod in weathering_copper_modifiers]
+				else:
+					category_items = []
+
+			if category_items:
 				group = current_group.group(1)
 				if group not in categories:
 					categories[group] = {
@@ -98,7 +110,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 						'items': []
 					}
 
-				categories[group]['items'].append(item)
+				categories[group]['items'].extend(category_items)
 
 	return dict(items=items, categories=categories)
 
