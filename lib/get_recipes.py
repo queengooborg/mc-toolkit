@@ -67,7 +67,7 @@ def convert_recipe_pattern(ingredients, raw_pattern):
 
 # Create recipe for common block variants
 def create_variant_recipe(variant, cost):
-	if variant in 'button':
+	if variant == 'button':
 		return {
 			'count': 1,
 			'ingredients': {
@@ -653,7 +653,7 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 		return
 
 	# Netherite smithing recipes
-	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(?:legacyN|n)etheriteSmithing\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )(?:CookingBookCategory\.\w+, )??{one_ingredient_regex}', line)
+	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.(?:legacyN|n)etheriteSmithing\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, (?:RecipeCategory\.[\w_]+, )?(?:CookingBookCategory\.\w+, )?{one_ingredient_regex}', line)
 	if match:
 		add_recipe(recipes, match.group(2), {
 			'count': 1,
@@ -775,16 +775,18 @@ def process_VanillaRecipe_line(recipes, line, simplest_only, dye_colors, smeltab
 	# Smithing template copying -- see net.minecraft.data.recipes.RecipeProvider (1.20.2)
 	match = re.match(rf'{line_prefix}(?:(?:Vanilla)?RecipeProvider|this)\.copySmithingTemplate\((?:(?:consumer|recipeOutput), )?{one_ingredient_regex}, {ingredient_regex}\);', line)
 	if match:
-		add_recipe(recipes, match.group(2), {
+		result = match.group(1)
+		ingredient = format_item_name(match.group(2) or match.groups()[2:])
+		add_recipe(recipes, result, {
 			'count': 2,
 			'ingredients': {
-				match.group(2): 1,
-				match.group(3): 1,
+				result: 1,
+				ingredient: 1,
 				'DIAMOND': 7,
 			},
 			'pattern': [
-				['DIAMOND', match.group(2), 'DIAMOND'],
-				['DIAMOND', match.group(3), 'DIAMOND'],
+				['DIAMOND', result, 'DIAMOND'],
+				['DIAMOND', ingredient, 'DIAMOND'],
 				['DIAMOND', 'DIAMOND', 'DIAMOND'],
 			]
 		})
@@ -911,7 +913,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 
 	# Get recipes for cooked food
 	with open(Path(f"{source_path}/data/recipes/RecipeProvider.java")) as dcj:
-		for line in dcj.readlines():
+		for line in dcj:
 			match = re.match(rf'^\s+(?:RecipeProvider|this)\.simpleCookingRecipe\((?:(?:consumer|recipeOutput), )?string, recipeSerializer, n, {one_ingredient_regex}, {one_ingredient_regex}\);', line)
 			if match:
 				add_recipe(recipes, match.group(2), {
@@ -926,7 +928,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 	if mc_version >= Version("1.17"):
 		# Get recipes for waxable items
 		with open(Path(f"{source_path}/world/item/HoneycombItem.java")) as dcj:
-			for line in dcj.readlines():
+			for line in dcj:
 				match = re.match(rf'^\s+public static final Supplier<BiMap<Block, Block>> WAXABLES = ', line)
 				if match:
 					pairs = re.finditer(rf'\.put\(\(Object\){one_ingredient_regex}, \(Object\){one_ingredient_regex}\)', line)
@@ -943,7 +945,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 
 		# Get recipes for block families (stairs, fences, etc.)
 		with open(Path(f"{source_path}/data/BlockFamilies.java")) as bfj:
-			for line in bfj.readlines():
+			for line in bfj:
 				match = re.match(rf'^\s+public static final BlockFamily [\w_]+ = BlockFamilies\.familyBuilder\({one_ingredient_regex}\)(.*)\.getFamily\(\);$', line)
 				if match:
 					sets = re.finditer(rf'\.(\w+)\({one_ingredient_regex}(?:, {one_ingredient_regex})?\)', match.group(2))
@@ -983,7 +985,7 @@ def get_recipes(source_path, mc_version, simplest_only=True):
 		recipes_path = Path(f"{source_path}/data/recipes/RecipeProvider.java")
 
 	with open(recipes_path) as vrpj:
-		for line in vrpj.readlines():
+		for line in vrpj:
 			# Get smeltables lists
 			match = re.match(rf'^\s+private static final ImmutableList<ItemLike> (\w+_SMELTABLES) = ImmutableList\.of\(\(Object\)Items\.([\w_]+)(?:, \(Object\)Items\.([\w_]+))*\);', line)
 			if match:

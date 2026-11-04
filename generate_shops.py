@@ -116,7 +116,6 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="generate_shops", description="Generate BossShopPro configuration files using an EssentialsX worth.yml and Minecraft deobfuscated source code")
 	parser.add_argument('mc_version', nargs='?', default=get_latest_version()[1], help="The Minecraft version to use")
 	parser.add_argument('-n', '--no_cache', action='store_true', help="Regenerate everything from scratch")
-	parser.add_argument('-n', '--no_cache', action='store_true')
 	args = parser.parse_args()
 
 	generate_shops(Version(args.mc_version), no_cache=args.no_cache)

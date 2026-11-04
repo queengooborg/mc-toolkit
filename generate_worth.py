@@ -178,7 +178,7 @@ def generate_worth(mc_version, no_cache=False, outpath=output_dir / "worth.yml",
 
 	source_path = prepare_source(mc_version)
 	items = get_items(source_path, mc_version, no_cache)['items']
-	worth = base_worth
+	worth = base_worth.copy()
 
 	calculated_items = len(worth.keys())
 	while True:

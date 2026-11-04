@@ -29,9 +29,10 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 	weathering_copper_modifiers = ["", "EXPOSED_", "WEATHERED_", "OXIDIZED_", "WAXED_", "WAXED_EXPOSED_", "WAXED_WEATHERED_", "WAXED_OXIDIZED_"]
 	weathering_copper_items = set()
+	color_collection_items = set()
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 	with open(str(itemsjava), 'r') as ij:
-		for line in ij.readlines():
+		for line in ij:
 			match = re.search(rf"public static final (Item|WeatheringCopperItems|WeatheringCopperCollection<Item>|ColorCollection<Item>) (\w+) = ", line)
 			if match:
 				item = match.group(2)
@@ -41,6 +42,7 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 					continue
 
 				if match.group(1) == "ColorCollection<Item>":
+					color_collection_items.add(item)
 					for c in dye_colors:
 						items[c + "_" + item] = recipes.get(c + "_" + item)
 					continue
@@ -61,17 +63,18 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 		current_group = None
 
 		# Reading source code line by line to avoid regex backtracking issues
-		for line in cmtj.readlines():
-			groupmatch = re.search(r"(?:Registry\.register\(registry, ([\w_]+), )?CreativeModeTab\.builder\(CreativeModeTab\.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(\w+)\)\)(?:\.alignedRight\(\))?\.displayItems\(\((parameters|itemDisplayParameters|featureFlagSet)(?:, output)?(?:, (?:bl|buildingBlocks))?\) -> {", line)
+		for line in cmtj:
+			groupmatch = re.search(r"(?:Registry\.register\(registry, (?P<registry_name>[\w_]+), |private static final CreativeModeTab (?P<field_name>[\w_]+) = )?CreativeModeTab\.builder\(CreativeModeTab.Row\.(?:TOP|BOTTOM), \d+\)\.title\(Component.translatable\(\"itemGroup\.\w+\"\)\)\.icon\(\(\) -> new ItemStack\((?:Items|Blocks)\.(?P<icon>\w+)(?:\.(?P<icon_variant>\w+)\(\))?\)\)(?:\.alignedRight\(\))?\.displayItems\(\((?P<parameters>parameters|itemDisplayParameters|featureFlagSet)(?:, (?P<output>\w+))?(?:, \w+)?\) -> {", line)
 			if groupmatch:
 				current_group = groupmatch
 
-			if not include_creative and current_group and current_group.group(1) in ['SPAWN_EGGS', 'OP_BLOCKS']:
+			if not include_creative and current_group and (current_group.group('registry_name') or current_group.group('field_name')) in ['SPAWN_EGGS', 'OP_BLOCKS']:
 				# Skip creative-only items
 				continue
 
 			item = None
-			itemmatch = re.search(r"output\.accept\(Items\.([\w_]+)\);", line)
+			output = current_group.group('output') if current_group else 'output'
+			itemmatch = re.search(rf"{re.escape(output)}\.accept\(Items\.([\w_]+)\);", line)
 			if itemmatch:
 				item = itemmatch.group(1)
 			elif 'CreativeModeTabs.generateFireworksAllDurations(' in line:
@@ -96,17 +99,27 @@ def get_items(source_path, mc_version, include_creative=False, all_recipes=False
 
 				category_items = [item]
 			else:
-				collectionmatch = re.search(r"Items\.([\w_]+)\.forEach\(\w+::accept\);", line)
-				if collectionmatch and collectionmatch.group(1) in weathering_copper_items:
-					category_items = [mod + collectionmatch.group(1) for mod in weathering_copper_modifiers]
+				color_collection_match = re.search(r"CreativeModeTabs\.registerColoredItems\(\w+, \w+, Items\.([\w_]+)\);", line)
+				if color_collection_match and color_collection_match.group(1) in color_collection_items:
+					category_items = [
+						f'{color}_{color_collection_match.group(1)}'
+						for color in dye_colors
+					]
 				else:
-					category_items = []
+					collectionmatch = re.search(r"Items\.([\w_]+)\.forEach\(\w+::accept\);", line)
+					if collectionmatch and collectionmatch.group(1) in weathering_copper_items:
+						category_items = [mod + collectionmatch.group(1) for mod in weathering_copper_modifiers]
+					else:
+						category_items = []
 
 			if category_items:
-				group = current_group.group(1)
+				group = current_group.group('registry_name') or current_group.group('field_name')
 				if group not in categories:
+					icon = current_group.group('icon')
+					if current_group.group('icon_variant'):
+						icon = f"{current_group.group('icon_variant')}_{icon}".upper()
 					categories[group] = {
-						'block': current_group.group(2),
+						'block': icon,
 						'items': []
 					}
 
@@ -167,13 +180,13 @@ def get_items_legacy(source_path, mc_version, include_creative=False, all_recipe
 	itemsjava = Path(f"{source_path}/world/item/Items.java")
 
 	with open(str(itemgroupjava), 'r') as igj:
-		for line in igj.readlines():
+		for line in igj:
 			match = re.search(rf"public static final {itemgroupname} (\w+) = \(?new {itemgroupname}\((\d+), \"(\w+)\"\) {{", line)
 			if match:
-				items[match.group(1).replace('TAB_', '')]['items'] = []
+				categories[match.group(1).replace('TAB_', '')]['items'] = []
 
 	with open(str(itemsjava), 'r') as ij:
-		for line in ij.readlines():
+		for line in ij:
 			match = re.search(rf"public static final Item (\w+) = .+{itemgroupname}\.(\w+).+", line)
 			item = None
 			group = 'MISC'
@@ -181,7 +194,7 @@ def get_items_legacy(source_path, mc_version, include_creative=False, all_recipe
 				item = match.group(1)
 
 				group = match.group(2).replace('TAB_', '')
-				if group not in items:
+				if group not in categories:
 					group = 'MISC'
 			else:
 				match2 = re.search(r"public static final Item (\w+) = .+", line)
@@ -203,13 +216,14 @@ def main(source_path, mc_version, no_cache=False, include_creative=False, all_re
 	cache_path = cache_dir / (mc_version + ("_creative" if include_creative else "") + ("_all-recipes" if all_recipes else "") + ".json")
 
 	if cache_path.exists() and not no_cache:
-		return json.load(open(cache_path, 'r'))
+		with open(cache_path, 'r') as cachefile:
+			return json.load(cachefile)
 
 	data = {}
 	if mc_version >= Version('1.19.3'):
-		data = get_items(source_path, mc_version, include_creative)
+		data = get_items(source_path, mc_version, include_creative, all_recipes)
 	else:
-		data = get_items_legacy(source_path, mc_version, include_creative)
+		data = get_items_legacy(source_path, mc_version, include_creative, all_recipes)
 
 	# Cache data
 	os.makedirs(cache_dir, exist_ok=True)
